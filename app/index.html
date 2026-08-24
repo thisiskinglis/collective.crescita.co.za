@@ -5,100 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="CRESCITA">
 <link rel="apple-touch-icon" href="/icon-512.png">
 <link rel="manifest" href="/manifest.json">
-<title>CRESCITA — Member App</title>
+<title>CRESCITA</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;overflow:hidden}
-.app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:#fff;border-left:1px solid #EDEDED;border-right:1px solid #EDEDED}
-.top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #EDEDED;flex-shrink:0;background:#fff}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#fff;font-family:Inter,sans-serif}
+.app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;border-left:1px solid #EDEDED;border-right:1px solid #EDEDED}
+.top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #EDEDED}
 .logo{height:18px}
-.member{font-size:9px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:5px 10px;border-radius:20px;color:#000;background:#F7F7F7;font-weight:700}
-.views{flex:1;overflow:hidden;position:relative;background:#fff}
-.view{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 16px 24px;transform:translateX(100%);opacity:0;transition:.28s cubic-bezier(.32,.72,0,1);pointer-events:none;background:#fff}
-.view.active{transform:translateX(0);opacity:1;pointer-events:auto}
-.h1{font-family:Syne,sans-serif;font-size:32px;line-height:.9;letter-spacing:-1px;margin:8px 0 12px}
+.member{font-size:9px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:5px 10px;border-radius:20px;background:#F7F7F7;font-weight:700}
+.view{flex:1;overflow-y:auto;padding:20px 16px 100px}
+.h1{font-family:Syne,sans-serif;font-size:38px;line-height:.9;letter-spacing:-2px;margin:10px 0}
 .sub{font-size:13px;color:#666;line-height:1.5;margin-bottom:20px}
-.card{background:#fff;border:1px solid #EAEAEA;border-radius:20px;padding:16px;margin-bottom:12px}
-.card.dark{background:#000;color:#fff;border-color:#000}
-.card.dark h3{color:#fff}
-.card.dark p{color:#AAA}
-.card h3{font-size:11px;letter-spacing:2px;color:#000;margin-bottom:10px}
-.card p,.card li{font-size:13px;line-height:1.5;color:#555}
-.card ul{list-style:none}
-.card li{padding:7px 0;border-bottom:1px solid #F2F2F2}
-.card li:last-child{border:0}
-.tag{font-size:8px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:4px 9px;border-radius:20px;color:#888;display:inline-block;margin-bottom:10px;background:#F7F7F7}
-.progress{height:8px;background:#EFEFEF;border-radius:10px;overflow:hidden;margin:14px 0}
-.progress i{display:block;height:100%;background:#000;width:43%}
-.stat{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-top:6px}
-.stat b{color:#000}
-.btn{border:1.5px solid #000;background:#000;color:#fff;padding:11px 20px;border-radius:999px;font-size:10px;letter-spacing:1.5px;font-weight:800;display:inline-block;text-decoration:none;margin-top:12px}
-.btn-outline{border:1.5px solid #000;background:#fff;color:#000}
-.bottom{height:76px;display:flex;justify-content:space-around;align-items:center;border-top:1px solid #EDEDED;background:rgba(255,255,255,.92);backdrop-filter:blur(20px);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
-.tab{flex:1;background:transparent;border:0;color:#AAA;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 0;font-size:9px;letter-spacing:1px;font-weight:600}
-.tab.active{color:#000}
-.dot{width:6px;height:6px;background:#000;border-radius:50%;display:none}
-.tab.active.dot{display:block}
+.card{border:1.5px solid #000;border-radius:24px;padding:20px;margin-bottom:16px}
+.card h3{font-family:Syne,sans-serif;font-size:18px;margin-bottom:6px}
+.card p{font-size:12px;color:#666;line-height:1.5;margin-bottom:14px}
+.btn{border:1.5px solid #000;background:#000;color:#fff;padding:13px 20px;border-radius:999px;font-size:10px;letter-spacing:1.5px;font-weight:800;display:block;text-align:center;text-decoration:none}
+.btn-outline{background:#fff;color:#000}
+.tag{font-size:8px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:4px 9px;border-radius:20px;color:#888;display:inline-block;margin-bottom:10px}
+.pdf-list a{font-size:11px;display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F0F0F0;text-decoration:none;color:#000}
 </style>
-<script>
-// Membership guard - allows?joined=true from welcome
-if(localStorage.getItem('collective_member')!=='true'){
-  if(window.location.search.includes('paid') || window.location.search.includes('success') || window.location.search.includes('joined')){
-    localStorage.setItem('collective_member','true');
-    history.replaceState({},'', '/app/');
-  } else {
-    window.location.replace('/');
-  }
-}
-</script>
 </head>
 <body>
 <div class="app">
-  <div class="top"><img src="/crescita_black_trans.png" class="logo"><div class="member" id="memberBadge">MEMBER #000</div></div>
-  <div class="views">
-    <div class="view active" id="v-collective">
-      <div class="tag">R99 = 100% TO COMMUNITY FUND • MEMBER ACCESS</div>
-      <div class="h1"><span>BY GRACE</span><span style="color:#999">WE GROW</span></div>
-      <div class="sub">You contribute to the community. Crescita gives back to you.</div>
-      <div class="card"><h3>FROM COLLECTIVE</h3><ul><li>Private members-only APP — you're in it ✓</li><li>Private WhatsApp community</li><li>Monthly 30-min Growth Call</li><li>Quarterly meetups & pop-ups</li></ul><a class="btn" href="#">JOIN WHATSAPP</a></div>
-      <div class="card"><h3>FROM PERFORMANCE</h3><ul><li>Monthly performance programme</li><li>In-app accountability</li><li>Never Finished — Faith, Fitness, Business</li></ul></div>
-      <div class="card"><h3>FROM IZIMPANDE</h3><p>Stories from the people behind the movement.</p></div>
-      <div class="card dark"><h3>THE MODEL</h3><p>You grow yourself.<br>You grow the brand.<br>Together, we grow the community.<br><br><b style="color:#fff">BY GRACE WE GROW.</b></p></div>
-    </div>
-    <div class="view" id="v-foundation">
-      <div class="tag">WHERE YOUR R99 GOES</div><div class="h1">FOUNDATION</div>
-      <div class="card" style="border-color:#000"><h3>UMLAZI SCHOOL SHOES</h3><div class="progress"><i id="prog"></i></div><div class="stat"><span><b>R4,320 raised</b></span><span>R10k goal</span></div><div class="stat"><span>43 members</span><span><b>43% funded</b></span></div></div>
-      <div class="card"><h3>VOTE NEXT PROJECT</h3><ul><li>◉ Umlazi School Shoes — R10k</li><li>○ Durban North Food Parcels — R8k</li><li>○ Township Gym Equipment — R15k</li></ul><a class="btn btn-outline" href="#">CAST VOTE</a></div>
-      <div class="card"><h3>IMPACT FEED</h3><p>Real photos & videos from completed initiatives.</p></div>
-    </div>
-    <div class="view" id="v-wear"><div class="tag">FUNDED BY CRESCITAOFFICIAL.COM</div><div class="h1">FROM WEAR</div><div class="card"><ul><li>48-hour early access</li><li>15% off — COLLECTIVE15</li><li id="wearMember">Member #000</li></ul><a class="btn" href="https://crescitaofficial.com" target="_blank">SHOP WEAR</a></div></div>
-    <div class="view" id="v-profile"><div class="h1">PROFILE</div><div class="card"><h3 id="profileMember">MEMBER #000</h3><div class="stat"><span>Status</span><span><b>Active ✓</b></span></div><div class="stat"><span>Plan</span><span><b>R99 / month</b></span></div><div class="stat"><span>Since</span><span><b>June 2026</b></span></div></div><div class="card"><h3>MANAGE</h3><a class="btn btn-outline" href="https://billing.stripe.com/p/login/test_PLACEHOLDER">MANAGE SUBSCRIPTION</a></div></div>
-  </div>
-  <div class="bottom">
-    <button class="tab active" data-t="collective"><div class="dot"></div>COLLECTIVE</button>
-    <button class="tab" data-t="foundation"><div class="dot"></div>FOUNDATION</button>
-    <button class="tab" data-t="wear"><div class="dot"></div>WEAR</button>
-    <button class="tab" data-t="profile"><div class="dot"></div>PROFILE</button>
-  </div>
+<div class="top"><img src="/crescita_black_trans.png" class="logo"><div class="member" id="memberBadge">MEMBER #000</div></div>
+<div class="view">
+<div class="tag">R99 = 100% TO COMMUNITY FUND</div>
+<div class="h1">BY GRACE<br><span style="color:#999">WE GROW</span></div>
+<div class="sub">You contribute. We grow together. 3 taps to everything.</div>
+
+<div class="card">
+<h3>1. PRIVATE COMMUNITY</h3>
+<p>WhatsApp — announcements, wins, meetups. You’re in.</p>
+<a class="btn" id="waCommunity" href="PASTE_YOUR_WHATSAPP_COMMUNITY_LINK_HERE" target="_blank">JOIN WHATSAPP COMMUNITY</a>
+</div>
+
+<div class="card">
+<h3>2. GROWTH CALL — 30 MIN</h3>
+<p>Personal or business — book your monthly call with me. 1:1.</p>
+<a class="btn btn-outline" id="growthCall" href="https://wa.me/YOURNUMBER?text=Hi%20I%27m%20Member%20" target="_blank">BOOK MY CALL</a>
+</div>
+
+<div class="card">
+<h3>3. PERFORMANCE PROGRAMME</h3>
+<p>Monthly accountability. New topic each month. PDF drops straight to your app.</p>
+<div id="programmeLatest"></div>
+<div class="pdf-list" id="pdfList"></div>
+</div>
+
+</div>
 </div>
 <script>
-const views={collective:document.getElementById('v-collective'),foundation:document.getElementById('v-foundation'),wear:document.getElementById('v-wear'),profile:document.getElementById('v-profile')};
-let cur='collective';
-document.querySelectorAll('.tab').forEach(b=>{b.addEventListener('click',()=>{const t=b.dataset.t;if(t===cur)return;views[cur].classList.remove('active');views[t].classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t));cur=t;})});
-// Dynamic member number from welcome.html
 const mn = localStorage.getItem('member_number') || '042';
-document.getElementById('memberBadge').textContent = 'MEMBER #' + mn;
-document.getElementById('wearMember').textContent = 'Member #' + mn;
-document.getElementById('profileMember').textContent = 'MEMBER #' + mn;
-// Foundation data
-fetch('/foundation/data.json?v='+Date.now()).then(r=>r.json()).then(d=>{if(d.current){const pct=Math.round(d.current.raised/d.current.goal*100);document.getElementById('prog').style.width=pct+'%';}}).catch(()=>{});
-// Service worker - absolute path for Apple + Android
+document.getElementById('memberBadge').textContent='MEMBER #'+mn;
+document.getElementById('growthCall').href='https://wa.me/277...?text=Hi%20I%27m%20Member%20%23'+mn+'%20-%20I%20want%20to%20book%20my%20Growth%20Call';
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
+fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
+  if(!list.length) return;
+  const latest=list[0];
+  document.getElementById('programmeLatest').innerHTML=`<div class="tag">${latest.date}</div><p><b>${latest.title}</b></p><a class="btn" href="${latest.file}" target="_blank">OPEN THIS MONTH'S PDF</a><br>`;
+  document.getElementById('pdfList').innerHTML=list.map(p=>`<a href="${p.file}" target="_blank"><span>${p.date} — ${p.title}</span><span>→</span></a>`).join('');
+}).catch(()=>{document.getElementById('programmeLatest').innerHTML='<p style="font-size:11px;color:#999">First programme dropping June 1</p>'});
 </script>
 </body>
 </html>
