@@ -60,12 +60,18 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;ov
 </div>
 </div>
 <script>
-const haptic = () => { try{navigator.vibrate(10)}catch(e){} }
-const mn = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number') || '042';
+const haptic = () => { try{ navigator.vibrate(10) }catch(e){} }
+
+// BOUNCER - stops sharing
+const mn = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number');
+if(!mn){
+  window.location.replace('/');
+  throw new Error('No member');
+}
+
 document.getElementById('memberBadge').textContent='MEMBER #'+mn;
 document.getElementById('growthCall').href = 'https://wa.me/27619757042?text=' + encodeURIComponent('Hi I\'m Member #' + mn + ' - I want to book my Growth Call');
 
-// haptic on growth call tap
 document.getElementById('growthCall')?.addEventListener('click', ()=>haptic());
 
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
@@ -76,6 +82,3 @@ fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
   document.getElementById('programmeLatest').innerHTML=`<div class="tag">${latest.date}</div><p><b>${latest.title}</b></p><a class="btn" href="${latest.file}" target="_blank" onclick="haptic()">OPEN THIS MONTH'S PDF</a><br>`;
   document.getElementById('pdfList').innerHTML=list.map(p=>`<a href="${p.file}" target="_blank" onclick="haptic()"><span>${p.date} — ${p.title}</span><span>→</span></a>`).join('');
 }).catch(()=>{document.getElementById('programmeLatest').innerHTML='<p style="font-size:11px;color:#999">First programme dropping June 1</p>'});
-</script>
-</body>
-</html>
