@@ -82,3 +82,6 @@ fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
   document.getElementById('programmeLatest').innerHTML=`<div class="tag">${latest.date}</div><p><b>${latest.title}</b></p><a class="btn" href="${latest.file}" target="_blank" onclick="haptic()">OPEN THIS MONTH'S PDF</a><br>`;
   document.getElementById('pdfList').innerHTML=list.map(p=>`<a href="${p.file}" target="_blank" onclick="haptic()"><span>${p.date} — ${p.title}</span><span>→</span></a>`).join('');
 }).catch(()=>{document.getElementById('programmeLatest').innerHTML='<p style="font-size:11px;color:#999">First programme dropping June 1</p>'});
+</script>
+</body>
+</html>
