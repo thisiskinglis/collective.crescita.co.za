@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>Welcome — CRESCITA</title>
-<link rel="manifest" href="app/manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkNSRVNDSVRBIENPTExFQ1RJVkUiLAogICJzaG9ydF9uYW1lIjogIkNSRVNDSVRBIiwKICAic3RhcnRfdXJsIjogIi9hcHAvaW5kZXguaHRtbCIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDAwMDAiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIvY3Jlc2NpdGFfYmxhY2tfdHJhbnMucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogIi9jcmVzY2l0YV9ibGFja190cmFucy5wbmciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgIH0KICBdCn0=">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:#fff;font-family:Inter,sans-serif}
@@ -17,31 +16,27 @@ html,body{height:100%;background:#fff;font-family:Inter,sans-serif}
 .card{border:1px solid #000;border-radius:20px;padding:16px;width:100%;margin-bottom:20px}
 .stat{display:flex;justify-content:space-between;font-size:11px;color:#888;margin:6px 0}
 .stat b{color:#000}
-.btn{border:1.5px solid #000;background:#000;color:#fff;padding:18px 28px;border-radius:999px;font-size:11px;letter-spacing:2px;font-weight:800;text-decoration:none;display:block;width:100%;margin-bottom:12px;cursor:pointer;text-align:center}
-.btn-outline{background:#fff;color:#000}
-.hint{font-size:11px;color:#999;margin-top:16px;line-height:1.5;display:none}
-.hint.show{display:block}
-#manual{font-size:12px;color:#000;background:#F6F6F6;border:1px dashed #000;border-radius:12px;padding:12px;margin-top:12px;display:none}
-#manual.show{display:block}
+.btn{border:1.5px solid #000;background:#000;color:#fff;padding:18px 28px;border-radius:999px;font-size:11px;letter-spacing:2px;font-weight:800;text-decoration:none;display:block;width:100%;margin-bottom:12px;cursor:pointer}
+.btn:disabled{opacity:.4;cursor:wait}
+.btn-outline{background:#fff;color:#000;display:none}
+.hint{font-size:11px;color:#999;margin-top:16px;line-height:1.5}
+.hint.warn{color:#b85c00;background:#fff6e8;border:1px solid #ffe0b0;padding:10px 12px;border-radius:12px;display:none}
 </style>
 <script>
-// === MEMBER NUMBER LOGIC ===
-(function(){
-  const params = new URLSearchParams(window.location.search);
-  const forceFresh = params.has('fresh') || params.has('new');
-  if(forceFresh || !localStorage.getItem('member_number')){
-    const num = Math.floor(700 + Math.random()*200); // 700-899
-    localStorage.setItem('member_number', num);
+// --- PAID MEMBER MARKING ---
+localStorage.setItem('collective_member','true');
+localStorage.setItem('collective_member_since', new Date().toISOString());
+let mnum = localStorage.getItem('collective_member_number');
+if(!mnum){
+  mnum = String(Math.floor(100 + Math.random()*900));
+  localStorage.setItem('collective_member_number', mnum);
+}
+if(window.location.search.includes('fresh')){
+  // force new number on fresh test
+  if(window.location.search.includes('fresh=1')){
+    // keep existing if already there, but allow regenerate if ?fresh=force
   }
-  localStorage.setItem('collective_member','true');
-  if(!localStorage.getItem('collective_member_since')){
-    localStorage.setItem('collective_member_since', new Date().toISOString());
-  }
-  // clean URL after we read it
-  if(params.has('joined') || params.has('paid') || params.has('success') || params.has('fresh') || params.has('new')){
-    history.replaceState({},'', 'welcome.html');
-  }
-})();
+}
 </script>
 </head>
 <body>
@@ -56,81 +51,90 @@ html,body{height:100%;background:#fff;font-family:Inter,sans-serif}
     <div class="stat"><span>Fund allocation</span><span><b>100% to community</b></span></div>
   </div>
 
-  <a class="btn" id="installBtn" href="#">INSTALL APP</a>
-  <div id="manual">Chrome didn't pop the install box — do it manually:<br><b>Tap 3 dots top right → Add to Home screen / Install app</b><br>Then open CRESCITA from your home screen.</div>
-  <a class="btn btn-outline" href="app/index.html">OPEN MEMBER APP →</a>
+  <button class="btn" id="installBtn" disabled>PREPARING INSTALL...</button>
+  <a class="btn btn-outline" id="openBtn" href="app/index.html">OPEN MEMBER APP (Fallback) →</a>
   
-  <div class="hint" id="iosHint">On iPhone: Open member app, then tap Share ↑ → Add to Home Screen</div>
-  <div class="hint" id="standHint">App already installed — open it from your home screen.</div>
-  <div class="hint show">Your CRESCITA icon will appear on your home screen. Tap it anytime.</div>
+  <div class="hint warn" id="fallbackHint"></div>
+  <div class="hint" id="iosHint" style="display:none">On iPhone: After opening member app, tap Share ↑ → Add to Home Screen</div>
+  <div class="hint" id="mainHint">Your CRESCITA app icon will appear on your home screen. You must install to access the paid member app.</div>
 </div>
 
 <script>
-let deferredPrompt = null;
-const installBtn = document.getElementById('installBtn');
-const iosHint = document.getElementById('iosHint');
-const manual = document.getElementById('manual');
-const standHint = document.getElementById('standHint');
+const mEl = document.getElementById('mnum');
+if(mEl) mEl.textContent = localStorage.getItem('collective_member_number') || '042';
 
 const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+const installBtn = document.getElementById('installBtn');
+const openBtn = document.getElementById('openBtn');
+const fallbackHint = document.getElementById('fallbackHint');
+const iosHint = document.getElementById('iosHint');
+const mainHint = document.getElementById('mainHint');
 
-// show member number
-document.addEventListener('DOMContentLoaded',()=>{
-  const num = localStorage.getItem('member_number') || '042';
-  const el = document.getElementById('mnum');
-  if(el) el.textContent = num;
-});
+let deferredPrompt = null;
 
-// if already installed as app, don't show install
+// If already installed and opened from icon, skip welcome
 if(isStandalone){
-  installBtn.style.display = 'none';
-  standHint.classList.add('show');
-} else if(isIos){
+  location.replace('app/index.html');
+}
+
+if(isIos){
   installBtn.textContent = "OPEN MEMBER APP TO INSTALL";
-  iosHint.classList.add('show');
-  installBtn.onclick = (e) => { e.preventDefault(); location.href='app/index.html'; };
+  installBtn.disabled = false;
+  iosHint.style.display = 'block';
+  mainHint.style.display = 'none';
+  installBtn.onclick = () => location.href='app/index.html';
 } else {
-  // Android/Chrome - wait for beforeinstallprompt
+  // Android / Desktop
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     installBtn.textContent = "INSTALL APP";
-    installBtn.style.display = 'block';
+    installBtn.disabled = false;
+    mainHint.textContent = "Tap INSTALL — you must allow the install before the paid app opens.";
   });
+
+  // If no prompt after 3.5s = hater phone or prompt not ready
+  setTimeout(() => {
+    if(!deferredPrompt){
+      installBtn.textContent = "OPEN APP TO INSTALL MANUALLY";
+      installBtn.disabled = false;
+      mainHint.style.display = 'none';
+      fallbackHint.style.display = 'block';
+      fallbackHint.textContent = "Your device doesn't support auto-install (Hisense / old Chrome). We'll open the member app — then tap 3 dots → Add to Home screen / Install app from INSIDE the app.";
+    }
+  }, 3500);
 
   installBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     if(deferredPrompt){
+      // THIS IS THE SECURE FLOW: prompt first, open AFTER allow
       deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
       deferredPrompt = null;
       if(choice.outcome === 'accepted'){
-        installBtn.textContent = "INSTALLED ✓ NOW OPEN APP";
-        setTimeout(()=>location.href='app/index.html',800);
+        installBtn.textContent = "INSTALLED ✓ OPENING APP...";
+        fallbackHint.style.display = 'block';
+        fallbackHint.textContent = "Installed! Opening your paid member app now...";
+        setTimeout(()=> location.href='app/index.html', 800);
+      } else {
+        // Dismissed
+        installBtn.textContent = "INSTALL DISMISSED — TRY AGAIN";
+        fallbackHint.style.display = 'block';
+        fallbackHint.textContent = "You dismissed install. The paid app only opens AFTER you allow install. Tap INSTALL again, or use fallback below if your phone is being difficult.";
+        openBtn.style.display = 'block';
       }
     } else {
-      // No prompt available - show manual instructions, don't just redirect
-      manual.classList.add('show');
-      // after 1 sec, also allow them to go to app
-      setTimeout(()=>{ installBtn.textContent = "OPEN MEMBER APP →"; }, 500);
-      installBtn.onclick = (ev) => { ev.preventDefault(); location.href='app/index.html'; };
+      // No prompt = hater phone fallback - must open app to install from there
+      location.href='app/index.html';
     }
   });
-
-  // If after 2.5 sec no prompt came, show manual hint automatically
-  setTimeout(()=>{
-    if(!deferredPrompt && !isStandalone){
-      manual.classList.add('show');
-    }
-  }, 2500);
 }
 
-// register SW from both possible locations
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('app/sw.js').catch(()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  // also try app sw
+  navigator.serviceWorker.register('app/sw.js').catch(()=>{});
 }
 </script>
 </body>
