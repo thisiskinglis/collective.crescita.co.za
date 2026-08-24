@@ -61,7 +61,7 @@ html,body{height:100%;background:#fff;font-family:Inter,sans-serif}
 <script>
 const mn = localStorage.getItem('member_number') || '042';
 document.getElementById('memberBadge').textContent='MEMBER #'+mn;
-document.getElementById('growthCall').href='https://wa.me/277...?text=Hi%20I%27m%20Member%20%23'+mn+'%20-%20I%20want%20to%20book%20my%20Growth%20Call';
+document.getElementById('growthCall').href = 'https://wa.me/27619757042?text=' + encodeURIComponent('Hi I\'m Member #' + mn + ' - I want to book my Growth Call');
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
 fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
   if(!list.length) return;
