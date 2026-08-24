@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Install Help - CRESCITA</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;overflow:hidden;overscroll-behavior:none;-webkit-overflow-scrolling:touch}
+.app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;border-left:1px solid #EDEDED;border-right:1px solid #EDEDED}
+.top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #EDEDED}
+.logo{height:18px}
+.member{font-size:9px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:5px 10px;border-radius:20px;background:#F7F7F7;font-weight:700}
+.view{flex:1;overflow-y:auto;padding:20px 16px 100px;scrollbar-width:none;-ms-overflow-style:none}
+.view::-webkit-scrollbar{display:none}
+.h1{font-family:Syne,sans-serif;font-size:34px;line-height:.9;letter-spacing:-2px;margin:10px 0}
+.sub{font-size:13px;color:#666;line-height:1.5;margin-bottom:20px}
+.card{border:1.5px solid #000;border-radius:24px;padding:20px;margin-bottom:16px}
+.card.ghost{border-color:#E0E0E0}
+.card h3{font-family:Syne,sans-serif;font-size:18px;margin-bottom:6px}
+.card p{font-size:12px;color:#666;line-height:1.5;margin-bottom:14px}
+.card ol{margin-left:18px;margin-bottom:14px}
+.card ol li{font-size:12px;line-height:1.6;margin-bottom:8px}
+.card ol li b{color:#000}
+.btn{border:1.5px solid #000;background:#000;color:#fff;padding:13px 20px;border-radius:999px;font-size:10px;letter-spacing:1.5px;font-weight:800;display:block;text-align:center;text-decoration:none}
+.btn-outline{background:#fff;color:#000}
+.tag{font-size:8px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:4px 9px;border-radius:20px;color:#888;display:inline-block;margin-bottom:10px}
+.alert{background:#FFF4CE;border:1.5px solid #FFD600;border-radius:16px;padding:14px 16px;margin-bottom:16px;font-size:11px;line-height:1.5}
+.alert b{font-size:11px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top"><img src="/crescita_black_trans.png" class="logo"><div class="member" id="memberBadge">HELP</div></div>
+<div class="view">
+<div class="tag">2 MIN FIX</div>
+<div class="h1">CAN'T<br><span style="color:#999">INSTALL?</span></div>
+<div class="sub">90% of issues = you opened the link inside WhatsApp. WhatsApp blocks installs. Do this:</div>
+
+<div class="alert">
+<b>⚠️ STEP 0 — GET OUT OF WHATSAPP BROWSER</b><br>
+If you tapped the link inside WhatsApp, you see no install button. Tap the <b>3 dots top-right → Open in Chrome</b> (Android) or <b>Open in Browser / Safari</b> (iPhone). Then follow below.
+</div>
+
+<div class="card" id="androidCard">
+<h3>ANDROID — Chrome</h3>
+<p>This is the "download" — it's not from Play Store.</p>
+<ol>
+<li>Open <b>collective.crescita.co.za</b> in <b>Chrome</b> (not WhatsApp)</li>
+<li>Tap the <b>3 dots top-right</b></li>
+<li>Tap <b>Add to Home Screen</b> or <b>Install App</b></li>
+<li>You’ll see black CRESCITA icon on your home screen — that’s the app.</li>
+</ol>
+<a class="btn" href="/app/index.html" onclick="haptic()">OPEN APP IN BROWSER NOW</a>
+<p style="margin-top:10px;font-size:10px;color:#999">If you already paid, you can use it here even without install.</p>
+</div>
+
+<div class="card ghost" id="iphoneCard">
+<h3>IPHONE — Safari</h3>
+<p>iPhone never shows a pop-up. You add it manually.</p>
+<ol>
+<li>Open <b>collective.crescita.co.za</b> in <b>Safari</b></li>
+<li>Tap the <b>Share button</b> (square with arrow ↑ at bottom)</li>
+<li>Scroll down, tap <b>Add to Home Screen</b></li>
+<li>Tap <b>Add</b> top-right. Black CRESCITA icon appears — done.</li>
+</ol>
+<a class="btn btn-outline" href="/app/index.html" onclick="haptic()">OPEN IN SAFARI NOW</a>
+</div>
+
+<div class="card ghost">
+<h3>PAID BUT STILL SHOWS PAYWALL?</h3>
+<p>You paid in a different browser, or you cleared data. Your Member # lives in that browser.</p>
+<p style="font-size:11px">Fix: Go back to your welcome link: <b>welcome.html?joined=true</b> — it re-sets your Member # and unlocks the app again.</p>
+</div>
+
+<div class="card">
+<h3>STILL STUCK?</h3>
+<p>Message me with your phone type and I’ll sort it in 30 sec.</p>
+<a class="btn" id="helpWa" href="https://wa.me/27619757042?text=Hi%20I%27m%20stuck%20installing%20the%20CRESCITA%20App%20-%20" target="_blank" onclick="haptic()">MESSAGE FOR HELP</a>
+</div>
+
+</div>
+</div>
+<script>
+const haptic = () => { try{navigator.vibrate(10)}catch(e){} }
+const mn = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number') || '';
+if(mn) document.getElementById('memberBadge').textContent='MEMBER #'+mn;
+const helpWa = document.getElementById('helpWa');
+if(mn && helpWa){ helpWa.href = 'https://wa.me/27619757042?text=' + encodeURIComponent('Hi I\'m Member #' + mn + ' - I\'m stuck installing the CRESCITA App'); }
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+if(isIOS){
+  document.getElementById('iphoneCard').style.borderColor='#000';
+  document.getElementById('iphoneCard').classList.remove('ghost');
+}
+</script>
+</body>
+</html>
