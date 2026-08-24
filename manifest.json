@@ -1,7 +1,7 @@
 {
   "name": "CRESCITA COLLECTIVE",
-  "short_name": "COLLECTIVE",
-  "description": "R99/month - 100% to community fund. BY GRACE WE GROW.",
+  "short_name": "CRESCITA",
+  "description" : "BY GRACE WE GROW",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
