@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<title>COLLECTIVE — CRESCITA</title>
+<title>CRESCITA — Member App</title>
+<link rel="manifest" href="../manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -12,21 +13,20 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;ov
 .app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;background:#fff;border-left:1px solid #EDEDED;border-right:1px solid #EDEDED}
 .top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #EDEDED;flex-shrink:0;background:#fff}
 .logo{height:18px}
-.member{font-size:9px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:5px 10px;border-radius:20px;color:#777;background:#F7F7F7}
+.member{font-size:9px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:5px 10px;border-radius:20px;color:#000;background:#F7F7F7;font-weight:700}
 .views{flex:1;overflow:hidden;position:relative;background:#fff}
 .view{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 16px 24px;transform:translateX(100%);opacity:0;transition:.28s cubic-bezier(.32,.72,0,1);pointer-events:none;background:#fff}
 .view.active{transform:translateX(0);opacity:1;pointer-events:auto}
-.h1{font-family:Syne,sans-serif;font-size:32px;line-height:.9;letter-spacing:-1px;margin:8px 0 12px;color:#000}
-.h1 span{display:block}
+.h1{font-family:Syne,sans-serif;font-size:32px;line-height:.9;letter-spacing:-1px;margin:8px 0 12px}
 .sub{font-size:13px;color:#666;line-height:1.5;margin-bottom:20px}
 .card{background:#fff;border:1px solid #EAEAEA;border-radius:20px;padding:16px;margin-bottom:12px}
-.card.dark{background:#000;border-color:#000;color:#fff}
+.card.dark{background:#000;color:#fff;border-color:#000}
 .card.dark h3{color:#fff}
-.card.dark p{color:#999}
+.card.dark p{color:#AAA}
 .card h3{font-size:11px;letter-spacing:2px;color:#000;margin-bottom:10px}
 .card p,.card li{font-size:13px;line-height:1.5;color:#555}
 .card ul{list-style:none}
-.card li{padding:7px 0;border-bottom:1px solid #F0F0F0}
+.card li{padding:7px 0;border-bottom:1px solid #F2F2F2}
 .card li:last-child{border:0}
 .tag{font-size:8px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:4px 9px;border-radius:20px;color:#888;display:inline-block;margin-bottom:10px;background:#F7F7F7}
 .progress{height:8px;background:#EFEFEF;border-radius:10px;overflow:hidden;margin:14px 0}
@@ -39,116 +39,43 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;ov
 .tab{flex:1;background:transparent;border:0;color:#AAA;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 0;font-size:9px;letter-spacing:1px;font-weight:600}
 .tab.active{color:#000}
 .dot{width:6px;height:6px;background:#000;border-radius:50%;display:none}
-.tab.active.dot{display:block}
+.tab.active .dot{display:block}
 </style>
+<script>
+// Membership guard - if not member, bounce to sales gate
+if(localStorage.getItem('collective_member')!=='true'){
+  // allow ?paid=1 to unlock from Stripe redirect
+  if(window.location.search.includes('paid') || window.location.search.includes('success')){
+    localStorage.setItem('collective_member','true');
+    history.replaceState({},'', 'index.html');
+  } else {
+    window.location.replace('../index.html');
+  }
+}
+</script>
 </head>
 <body>
 <div class="app">
-  <div class="top">
-    <img src="../crescita_black_trans.png" class="logo" alt="CRESCITA">
-    <div class="member">MEMBER #042</div>
-  </div>
+  <div class="top"><img src="../crescita_black_trans.png" class="logo"><div class="member">MEMBER #042</div></div>
   <div class="views">
     <div class="view active" id="v-collective">
-      <div class="tag">R99 = 100% TO COMMUNITY FUND</div>
+      <div class="tag">R99 = 100% TO COMMUNITY FUND • MEMBER ACCESS</div>
       <div class="h1"><span>BY GRACE</span><span style="color:#999">WE GROW</span></div>
-      <div class="sub">Your R99 funds community initiatives. Our brands fund your Collective benefits.<br><br>This is not a subscription. It is a pay-it-forward membership: You contribute to the community. Crescita gives back to you.</div>
-
-      <div class="card">
-        <h3>FROM COLLECTIVE</h3>
-        <ul>
-          <li>Private members-only APP — you're in it</li>
-          <li>Private Collective WhatsApp community</li>
-          <li>Monthly 30-min Growth Call</li>
-          <li>Invitations to quarterly meetups & pop-ups across SA</li>
-        </ul>
-        <a class="btn" href="#">JOIN WHATSAPP</a>
-      </div>
-
-      <div class="card">
-        <h3>FROM PERFORMANCE</h3>
-        <ul>
-          <li>Monthly performance programme</li>
-          <li>In-app accountability check-in</li>
-          <li>Never Finished progress — Faith, Fitness, Business</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3>FROM IZIMPANDE — ROOTED TO RISE</h3>
-        <p>Stories from the people, communities and projects behind the movement. Real people. Real progress. Real roots.</p>
-      </div>
-
-      <div class="card dark">
-        <h3>THE COLLECTIVE MODEL</h3>
-        <p>You grow yourself.<br>You grow the brand.<br>Together, we grow the community.<br><br><b style="color:#fff">BY GRACE WE GROW.</b></p>
-      </div>
+      <div class="sub">You contribute to the community. Crescita gives back to you.</div>
+      <div class="card"><h3>FROM COLLECTIVE</h3><ul><li>Private members-only APP — you're in it ✓</li><li>Private WhatsApp community</li><li>Monthly 30-min Growth Call</li><li>Quarterly meetups & pop-ups</li></ul><a class="btn" href="#">JOIN WHATSAPP</a></div>
+      <div class="card"><h3>FROM PERFORMANCE</h3><ul><li>Monthly performance programme</li><li>In-app accountability</li><li>Never Finished — Faith, Fitness, Business</li></ul></div>
+      <div class="card"><h3>FROM IZIMPANDE</h3><p>Stories from the people behind the movement.</p></div>
+      <div class="card dark"><h3>THE MODEL</h3><p>You grow yourself.<br>You grow the brand.<br>Together, we grow the community.<br><br><b style="color:#fff">BY GRACE WE GROW.</b></p></div>
     </div>
-
     <div class="view" id="v-foundation">
-      <div class="tag">WHERE YOUR R99 GOES</div>
-      <div class="h1"><span>FOUNDATION</span></div>
-
-      <div class="card" style="border-color:#000">
-        <h3>UMLAZI SCHOOL SHOES</h3>
-        <div class="progress"><i id="prog"></i></div>
-        <div class="stat"><span><b>R4,320 raised</b></span><span>R10,000 goal</span></div>
-        <div class="stat"><span>43 members contributing</span><span><b>43% funded</b></span></div>
-        <p style="margin-top:12px">Live fund tracker — updates as Collective grows.</p>
-      </div>
-
-      <div class="card">
-        <h3>VOTE NEXT PROJECT</h3>
-        <ul>
-          <li>◉ Umlazi School Shoes — R10k</li>
-          <li>○ Durban North Food Parcels — R8k</li>
-          <li>○ Township Gym Equipment — R15k</li>
-        </ul>
-        <a class="btn btn-outline" href="#">CAST VOTE</a>
-      </div>
-
-      <div class="card">
-        <h3>IMPACT FEED</h3>
-        <p>Real photos, videos and updates from completed initiatives.</p>
-      </div>
-
-      <div class="card">
-        <h3>MY IMPACT</h3>
-        <div class="stat"><span>Member since</span><span><b>June 2026</b></span></div>
-        <div class="stat"><span>Projects supported</span><span><b>2</b></span></div>
-        <div class="stat"><span>Total contributed</span><span><b>R198</b></span></div>
-      </div>
+      <div class="tag">WHERE YOUR R99 GOES</div><div class="h1">FOUNDATION</div>
+      <div class="card" style="border-color:#000"><h3>UMLAZI SCHOOL SHOES</h3><div class="progress"><i id="prog"></i></div><div class="stat"><span><b>R4,320 raised</b></span><span>R10k goal</span></div><div class="stat"><span>43 members</span><span><b>43% funded</b></span></div></div>
+      <div class="card"><h3>VOTE NEXT PROJECT</h3><ul><li>◉ Umlazi School Shoes — R10k</li><li>○ Durban North Food Parcels — R8k</li><li>○ Township Gym Equipment — R15k</li></ul><a class="btn btn-outline" href="#">CAST VOTE</a></div>
+      <div class="card"><h3>IMPACT FEED</h3><p>Real photos & videos from completed initiatives.</p></div>
     </div>
-
-    <div class="view" id="v-wear">
-      <div class="tag">FUNDED BY CRESCITAOFFICIAL.COM</div>
-      <div class="h1"><span>FROM WEAR</span></div>
-      <div class="card">
-        <ul>
-          <li>48-hour early access to every drop before public release</li>
-          <li>15% off Crescita purchases — code: COLLECTIVE15</li>
-          <li>Official Collective Member number — e.g. Member #042</li>
-        </ul>
-        <a class="btn" href="https://crescitaofficial.com" target="_blank">SHOP WEAR</a>
-      </div>
-    </div>
-
-    <div class="view" id="v-profile">
-      <div class="h1"><span>PROFILE</span></div>
-      <div class="card">
-        <h3>MEMBER #042</h3>
-        <p>collective.crescita.co.za</p>
-        <div class="stat"><span>Status</span><span><b>Active</b></span></div>
-        <div class="stat"><span>Plan</span><span><b>R99 / month</b></span></div>
-      </div>
-      <div class="card">
-        <h3>MANAGE</h3>
-        <a class="btn btn-outline" href="https://crescita.co.za" target="_blank">CRESCITA.CO.ZA</a>
-        <a class="btn btn-outline" href="https://crescitaofficial.com" target="_blank" style="margin-left:6px">SHOP</a>
-      </div>
-    </div>
+    <div class="view" id="v-wear"><div class="tag">FUNDED BY CRESCITAOFFICIAL.COM</div><div class="h1">FROM WEAR</div><div class="card"><ul><li>48-hour early access</li><li>15% off — COLLECTIVE15</li><li>Member #042</li></ul><a class="btn" href="https://crescitaofficial.com" target="_blank">SHOP WEAR</a></div></div>
+    <div class="view" id="v-profile"><div class="h1">PROFILE</div><div class="card"><h3>MEMBER #042</h3><div class="stat"><span>Status</span><span><b>Active ✓</b></span></div><div class="stat"><span>Plan</span><span><b>R99 / month</b></span></div><div class="stat"><span>Since</span><span><b>June 2026</b></span></div></div><div class="card"><h3>MANAGE</h3><a class="btn btn-outline" href="https://billing.stripe.com/p/login/test_PLACEHOLDER">MANAGE SUBSCRIPTION</a></div></div>
   </div>
-
   <div class="bottom">
     <button class="tab active" data-t="collective"><div class="dot"></div>COLLECTIVE</button>
     <button class="tab" data-t="foundation"><div class="dot"></div>FOUNDATION</button>
@@ -156,26 +83,12 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;ov
     <button class="tab" data-t="profile"><div class="dot"></div>PROFILE</button>
   </div>
 </div>
-
 <script>
 const views={collective:document.getElementById('v-collective'),foundation:document.getElementById('v-foundation'),wear:document.getElementById('v-wear'),profile:document.getElementById('v-profile')};
 let cur='collective';
-document.querySelectorAll('.tab').forEach(b=>{
-  b.addEventListener('click',()=>{
-    const t=b.dataset.t;
-    if(t===cur) return;
-    views[cur].classList.remove('active');
-    views[t].classList.add('active');
-    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t));
-    cur=t;
-  })
-});
-fetch('../foundation/data.json?v='+Date.now()).then(r=>r.json()).then(d=>{
-  if(d.current){
-    const pct=Math.round(d.current.raised/d.current.goal*100);
-    document.getElementById('prog').style.width=pct+'%';
-  }
-}).catch(()=>{});
+document.querySelectorAll('.tab').forEach(b=>{b.addEventListener('click',()=>{const t=b.dataset.t;if(t===cur)return;views[cur].classList.remove('active');views[t].classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t));cur=t;})});
+fetch('../foundation/data.json?v='+Date.now()).then(r=>r.json()).then(d=>{if(d.current){const pct=Math.round(d.current.raised/d.current.goal*100);document.getElementById('prog').style.width=pct+'%';}}).catch(()=>{});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('../sw.js');}
 </script>
 </body>
 </html>
