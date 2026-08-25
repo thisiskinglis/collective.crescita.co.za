@@ -24,10 +24,12 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;ov
 .card{border:1.5px solid #000;border-radius:24px;padding:20px;margin-bottom:16px}
 .card h3{font-family:Syne,sans-serif;font-size:18px;margin-bottom:6px}
 .card p{font-size:12px;color:#666;line-height:1.5;margin-bottom:14px}
-.btn{border:1.5px solid #000;background:#000;color:#fff;padding:13px 20px;border-radius:999px;font-size:10px;letter-spacing:1.5px;font-weight:800;display:block;text-align:center;text-decoration:none}
+.btn{border:1.5px solid #000;background:#000;color:#fff;padding:13px 20px;border-radius:999px;font-size:10px;letter-spacing:1.5px;font-weight:800;display:block;text-align:center;text-decoration:none;margin-bottom:10px}
 .btn-outline{background:#fff;color:#000}
+.btn:last-child{margin-bottom:0}
 .tag{font-size:8px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:4px 9px;border-radius:20px;color:#888;display:inline-block;margin-bottom:10px}
 .pdf-list a{font-size:11px;display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F0F0F0;text-decoration:none;color:#000}
+.small{font-size:10px;color:#999;text-align:center;margin-top:10px;line-height:1.4}
 </style>
 </head>
 <body>
@@ -38,10 +40,13 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;ov
 <div class="h1">BY GRACE<br><span style="color:#999">WE GROW</span></div>
 <div class="sub">You contribute. We grow together. 3 taps to everything.</div>
 
-<div class="card">
-<h3>1. PRIVATE COMMUNITY</h3>
-<p>WhatsApp — announcements, wins, meetups. You’re in.</p>
-<a class="btn" id="waCommunity" href="PASTE_YOUR_WHATSAPP_COMMUNITY_LINK_HERE" target="_blank">JOIN WHATSAPP COMMUNITY</a>
+<div class="card" style="border-color:#000;background:#000;color:#fff">
+<h3 style="color:#fff">1. PRIVATE COMMUNITY</h3>
+<p style="color:#aaa">This is your access after paying. Tap to join the main CRESCITA community + get into your paid groups.</p>
+<a class="btn" style="background:#fff;color:#000" id="waCommunity" href="#" target="_blank">JOIN CRESCITA COMMUNITY</a>
+<a class="btn" style="background:transparent;color:#fff;border-color:#444" id="waCollective" href="#" target="_blank">JOIN COLLECTIVE (R99 MEMBERS)</a>
+<a class="btn" style="background:transparent;color:#fff;border-color:#444" id="waHand" href="#" target="_blank">JOIN HERITAGE & HAND</a>
+<p class="small" style="color:#666">If you paid R99, use the COLLECTIVE button. It auto-adds you to CRESCITA + Announcements.</p>
 </div>
 
 <div class="card">
@@ -62,7 +67,14 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif;ov
 <script>
 const haptic = () => { try{ navigator.vibrate(10) }catch(e){} }
 
-// BOUNCER - stops sharing
+// === CONFIG - YOUR LIVE LINKS ===
+const LINKS = {
+  COMMUNITY: "https://chat.whatsapp.com/IPJFzWhdQYRLRs7T6A8B9N", // main CRESCITA community
+  COLLECTIVE: "https://chat.whatsapp.com/IPJFzWhdQYRLRs7T6A8B9N", // CRESCITA COLLECTIVE (R99) - using same link for now
+  HAND: "https://chat.whatsapp.com/IPJFzWhdQYRLRs7T6A8B9N" // HERITAGE & HAND - using same link for now
+};
+
+// BOUNCER - stops sharing / non-payers
 const mn = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number');
 if(!mn){
   window.location.replace('/');
@@ -72,7 +84,15 @@ if(!mn){
 document.getElementById('memberBadge').textContent='MEMBER #'+mn;
 document.getElementById('growthCall').href = 'https://wa.me/27619757042?text=' + encodeURIComponent('Hi I\'m Member #' + mn + ' - I want to book my Growth Call');
 
+// Set WhatsApp links
+document.getElementById('waCommunity').href = LINKS.COMMUNITY;
+document.getElementById('waCollective').href = LINKS.COLLECTIVE;
+document.getElementById('waHand').href = LINKS.HAND;
+
 document.getElementById('growthCall')?.addEventListener('click', ()=>haptic());
+document.getElementById('waCommunity')?.addEventListener('click', ()=>haptic());
+document.getElementById('waCollective')?.addEventListener('click', ()=>haptic());
+document.getElementById('waHand')?.addEventListener('click', ()=>haptic());
 
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
 
