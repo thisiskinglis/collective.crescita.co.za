@@ -52,6 +52,11 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif}
 <div class="h1">BY GRACE<br><span style="color:#999">WE GROW</span></div>
 <div class="sub">You contribute. We grow together. 1 tap to get in.</div>
 
+<div class="card" id="liveDropCard" style="display:none;background:#000;color:#fff;border-color:#000;position:relative;overflow:hidden">
+<div id="liveDropContent"></div>
+</div>
+
+
 <div class="card" style="background:#000;color:#fff;border-color:#000">
 <h3 style="color:#fff">1. PRIVATE COMMUNITY</h3>
 <p style="color:#aaa">Tap below — you’ll join CRESCITA + COLLECTIVE automatically.</p>
@@ -272,6 +277,34 @@ const btnEl = document.getElementById('oneCardBtn');
 if(btnEl) btnEl.addEventListener('click', oneTapCard);
 const canvasEl = document.getElementById('memberCardCanvas');
 if(canvasEl) canvasEl.addEventListener('click', oneTapCard);
+
+
+// === LIVE DROP / ANNOUNCEMENTS - AUTO FLIPS FROM REPO ===
+async function loadLiveDrop(){
+  try {
+    const res = await fetch('/app/announcements.json?v='+Date.now());
+    const data = await res.json();
+    const card = document.getElementById('liveDropCard');
+    const content = document.getElementById('liveDropContent');
+    if(!data || !data.active || !card || !content) {
+      if(card) card.style.display='none';
+      return;
+    }
+    card.style.display='block';
+    const imgHtml = data.image ? `<img src="${data.image}" style="width:100%;border-radius:12px;margin-bottom:12px;max-height:200px;object-fit:cover">` : '';
+    content.innerHTML = `
+      <div class="tag" style="background:#00C950;color:#000;border-color:#00C950">🔴 LIVE NOW • ${data.date || ''}</div>
+      <h3 style="color:#fff;margin-top:8px">${data.title}</h3>
+      <p style="color:#aaa">${data.message}</p>
+      ${imgHtml}
+      ${data.buttonLink ? `<a class="btn btn-white" href="${data.buttonLink}" target="_blank">${data.buttonText || 'OPEN'}</a>` : ''}
+    `;
+  } catch(e){
+    console.log('no live drop', e);
+  }
+}
+loadLiveDrop();
+// END LIVE DROP
 
 // === PROGRAMME LIST WITH DOWNLOAD BUTTONS - ALWAYS SHOWS ===
 const FALLBACK_PDF = "/app/programmes/september-change.pdf";
