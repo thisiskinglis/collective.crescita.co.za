@@ -74,7 +74,20 @@ const VAPID_PUBLIC = "BMcqs2isrcd8Qsa1qCIYhA8Ls5EBeWFHc7ysXrOTeLfW8ax6ht8FsgNAJN
 // === REPLACE THIS WITH YOUR CLOUDFLARE WORKER URL AFTER YOU DEPLOY ===
 const WORKER_URL = "https://white-resonance-a4ab.thisistrinary.workers.dev"; // e.g. https://crescita-push.yourname.workers.dev
 
-const mn = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number') || '859';
+const params = new URLSearchParams(window.location.search);
+const urlMember = params.get('member') || params.get('ref');
+let mn = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number') || urlMember;
+if (!mn) {
+  // New visitor who hasn't paid yet - give them a temporary guest number, NOT 859
+  // After payment, your Shopify / Paystack will set ?member=NEWNUMBER and it will lock in
+  mn = String(Math.floor(860 + Math.random() * 9000)); // 860-9860, never 859
+  localStorage.setItem('collective_member_number', mn);
+}
+// Founder #859 lock - your phone already has 859 so you keep it
+if (localStorage.getItem('collective_member_number') === '859' || mn === '859') {
+  mn = '859';
+  localStorage.setItem('collective_member_number', '859');
+}
 document.getElementById('memberBadge').textContent='MEMBER #'+mn;
 document.getElementById('discountCode').textContent = DISCOUNT_CODE;
 document.getElementById('growthCall').href = 'https://wa.me/27619757042?text=' + encodeURIComponent('Hi I\'m Member #' + mn + ' - I want to book my Growth Call');
