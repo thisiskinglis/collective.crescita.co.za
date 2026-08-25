@@ -13,8 +13,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
-
-/* TRUE APP FEEL - LOCK ZOOM + FIT ANY PHONE */
 html{overscroll-behavior:none;touch-action:manipulation;-webkit-text-size-adjust:100%;height:100%;width:100%;position:fixed;overflow:hidden}
 body{overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;position:fixed;overflow:hidden;width:100%;height:100dvh;height:100vh}
 .app{height:100dvh;height:100vh;overflow:hidden;display:flex;flex-direction:column}
@@ -39,7 +37,7 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif}
 .code-row{display:flex;flex-direction:column;gap:10px;margin:12px 0;width:100%}
 .code-box{border:1.5px dashed #000;border-radius:14px;padding:12px 18px;font-family:Syne,sans-serif;font-weight:800;letter-spacing:2px;font-size:15px;width:100%;text-align:center;word-break:break-all}
 .copy-btn{border:1.5px solid #000;background:#000;color:#fff;padding:14px 16px;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer;width:100%;letter-spacing:1px}
-#memberCardCanvas{width:100%;max-width:280px;height:auto;display:block;margin:12px auto;border-radius:20px;background:#000}
+#memberCardCanvas{width:auto!important;max-width:100%!important;height:360px!important;max-height:360px!important;object-fit:contain;display:block;margin:0 auto;border-radius:16px;background:#000}
 .push-dot{width:8px;height:8px;border-radius:50%;background:#00C950;display:inline-block;margin-right:6px;animation:pulse 2s infinite}
 @keyframes pulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
 .prog-item{padding:12px 0;border-bottom:1px solid #F0F0F0;display:flex;flex-direction:column;gap:8px}
@@ -71,7 +69,9 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif}
 
 <div class="card" style="background:#000;color:#fff;border-color:#000">
 <h3 style="color:#fff">4. YOUR MEMBER CARD</h3><p style="color:#aaa">One tap — saves to your gallery for stories.</p>
-<canvas id="memberCardCanvas" width="1080" height="1920" style="width:100%!important;height:auto!important;max-height:360px!important;object-fit:contain;background:#000;border-radius:12px;display:block;margin:0 auto"></canvas>
+<div style="height:380px;overflow:hidden;background:#000;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:10px 0">
+<canvas id="memberCardCanvas" width="1080" height="1920" style="height:360px!important;width:auto!important;max-width:100%!important;object-fit:contain;background:#000;border-radius:12px;display:block"></canvas>
+</div>
 <canvas id="qrTemp" width="400" height="400" style="display:none"></canvas>
 <button class="btn btn-white" id="oneCardBtn" style="margin-top:14px;font-size:12px;padding:16px">DOWNLOAD FOR SOCIALS</button>
 <p id="cardStatus" style="font-size:10px;color:#777;text-align:center;margin-top:10px">Generating your card...</p>
@@ -98,7 +98,6 @@ if (localStorage.getItem('collective_member_number') === '859' || mn === '859' |
   mn = '859';
   localStorage.setItem('collective_member_number', '859');
 } else if (urlMember) {
-  // If URL has member number from payment, lock it
   localStorage.setItem('collective_member_number', urlMember);
   mn = urlMember;
 }
@@ -122,6 +121,8 @@ function urlBase64ToUint8Array(base64String) {
   for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
   return outputArray;
 }
+
+// === PUSH WITH KV SAVE - VERIFIED ===
 const pushBtn = document.getElementById('enablePushBtn');
 const pushStatus = document.getElementById('pushStatus');
 async function updatePushUI(){
@@ -140,16 +141,16 @@ async function enablePush(){
     const reg = await navigator.serviceWorker.register('/sw.js');
     await navigator.serviceWorker.ready;
     const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC) });
-    pushStatus.textContent = 'Saving...';
+    pushStatus.textContent = 'Saving to KV...';
     try{
       await fetch(`${WORKER_URL}/api/save-subscription`, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ member: mn, subscription: sub })
+        body: JSON.stringify({ member: mn, subscription: sub, site: 'collective.crescita.co.za' })
       });
-      pushStatus.textContent = `✅ Enabled as Member #${mn} — saved automatically`;
+      pushStatus.textContent = `✅ Enabled as Member #${mn} — saved to KV`;
     }catch(e){
-      pushStatus.textContent = 'Enabled locally — add Worker URL to auto-save';
+      pushStatus.textContent = 'Enabled locally — KV save failed, check Worker';
       console.log('SAVE FAILED', e);
       localStorage.setItem('push_subscription', JSON.stringify(sub));
     }
@@ -271,44 +272,43 @@ const btnEl = document.getElementById('oneCardBtn');
 if(btnEl) btnEl.addEventListener('click', oneTapCard);
 const canvasEl = document.getElementById('memberCardCanvas');
 if(canvasEl) canvasEl.addEventListener('click', oneTapCard);
-// END MEMBER CARD
 
-// === PROGRAMME LIST WITH DOWNLOAD BUTTONS - LOCKED TO september-change.pdf ===
+// === PROGRAMME LIST WITH DOWNLOAD BUTTONS - ALWAYS SHOWS ===
 const FALLBACK_PDF = "/app/programmes/september-change.pdf";
-fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
-  if(!list || !list.length) {
-    list = [{date:"SEPTEMBER 2025", title:"CHANGE", file:FALLBACK_PDF}];
-  }
+const FALLBACK_LIST = [{date:"SEPTEMBER 2025", title:"CHANGE", file:FALLBACK_PDF}];
+
+function renderProgrammes(list){
+  if(!list || !list.length) list = FALLBACK_LIST;
   const latest=list[0];
-  document.getElementById('programmeLatest').innerHTML=`
+  const latestEl = document.getElementById('programmeLatest');
+  const listEl = document.getElementById('pdfList');
+  if(latestEl){
+    latestEl.innerHTML=`
     <div class="tag">${latest.date}</div>
     <p><b>${latest.title}</b></p>
     <div style="display:flex;gap:8px;margin-top:8px">
       <a class="btn" href="${latest.file}" target="_blank" style="flex:1">VIEW</a>
-      <a class="btn btn-outline" href="${latest.file}" download="CRESCITA-CHANGE-Sept.pdf" style="flex:1">DOWNLOAD</a>
+      <a class="btn btn-outline" href="${latest.file}" download style="flex:1">DOWNLOAD</a>
     </div><br>`;
-  document.getElementById('pdfList').innerHTML=list.map(p=>`
+  }
+  if(listEl){
+    listEl.innerHTML=list.map(p=>`
     <div class="prog-item">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <span style="font-size:11px;font-weight:700;flex:1">${p.date} — ${p.title}</span>
-        <a href="${p.file}" download="CRESCITA-${p.title}.pdf" style="font-size:10px;border:1.5px solid #000;background:#000;color:#fff;padding:8px 14px;border-radius:999px;text-decoration:none;font-weight:800;white-space:nowrap">DOWNLOAD</a>
+        <a href="${p.file}" download style="font-size:10px;border:1.5px solid #000;background:#000;color:#fff;padding:8px 14px;border-radius:999px;text-decoration:none;font-weight:800;white-space:nowrap">DOWNLOAD</a>
       </div>
     </div>`).join('');
-}).catch((e)=>{
-  console.log('prog fetch err, using fallback', e);
-  const fallback = {date:"SEPTEMBER 2025", title:"CHANGE", file:FALLBACK_PDF};
-  document.getElementById('programmeLatest').innerHTML=`
-    <div class="tag">${fallback.date}</div>
-    <p><b>${fallback.title}</b></p>
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <a class="btn" href="${fallback.file}" target="_blank" style="flex:1">VIEW</a>
-      <a class="btn btn-outline" href="${fallback.file}" download="CRESCITA-CHANGE-Sept.pdf" style="flex:1">DOWNLOAD</a>
-    </div><br>`;
-  document.getElementById('pdfList').innerHTML=`<div class="prog-item"><span style="font-size:11px">Tap DOWNLOAD to get September CHANGE</span></div>`;
+  }
+}
+renderProgrammes(FALLBACK_LIST);
+fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
+  if(list && list.length) renderProgrammes(list);
+}).catch(e=>{
+  console.log('prog fetch err, keeping fallback', e);
 });
 
-
-// BLOCK DOUBLE-TAP + PINCH ZOOM - TRUE APP FEEL
+// BLOCK DOUBLE-TAP + PINCH ZOOM
 document.addEventListener('touchstart', function(e){ if(e.touches.length>1){ e.preventDefault(); } }, {passive:false});
 let lastTouchEnd=0;
 document.addEventListener('touchend', function(e){
@@ -317,7 +317,6 @@ document.addEventListener('touchend', function(e){
   lastTouchEnd=now;
 }, false);
 document.addEventListener('dblclick', function(e){ e.preventDefault(); }, {passive:false});
-
 </script>
 </body>
 </html>
