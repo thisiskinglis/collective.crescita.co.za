@@ -160,73 +160,106 @@ async function enablePush(){
 pushBtn.addEventListener('click', enablePush);
 updatePushUI();
 
-// === MEMBER CARD - FIXED SMALL PREVIEW + WORKING DOWNLOAD ===
+// === MEMBER CARD - ONE BUTTON SIMPLE ===
 let cardReady = false;
 function drawMemberCard(memberNum){
   const canvas = document.getElementById('memberCardCanvas');
   const ctx = canvas.getContext('2d');
   const qrCanvas = document.getElementById('qrTemp');
   const status = document.getElementById('cardStatus');
-  status.textContent = 'Generating card...';
+  status.textContent = 'Creating your card...';
   
   ctx.fillStyle = '#000'; ctx.fillRect(0,0,1080,1920);
-  ctx.strokeStyle = '#222'; ctx.lineWidth = 2; ctx.strokeRect(30,30,1020,1860);
+  ctx.strokeStyle = '#1A1A1A'; ctx.lineWidth = 2; ctx.strokeRect(30,30,1020,1860);
   ctx.fillStyle = '#fff'; ctx.font = '800 48px Syne'; ctx.fillText('CRESCITA', 80, 140);
   ctx.font = '600 22px Inter'; ctx.fillStyle = '#888'; ctx.fillText('R99 = 100% TO COMMUNITY FUND', 80, 190);
   ctx.fillStyle = '#fff'; ctx.font = '800 110px Syne'; ctx.fillText('BY GRACE', 80, 360);
   ctx.fillStyle = '#555'; ctx.fillText('WE GROW', 80, 480);
   ctx.fillStyle = '#fff'; ctx.font = '800 90px Syne'; ctx.fillText('MEMBER', 80, 720);
   ctx.font = '800 200px Syne'; ctx.fillText(`#${memberNum}`, 80, 920);
-  ctx.strokeStyle = '#333'; ctx.beginPath(); ctx.moveTo(80, 1000); ctx.lineTo(1000, 1000); ctx.stroke();
+  ctx.strokeStyle = '#222'; ctx.beginPath(); ctx.moveTo(80, 1000); ctx.lineTo(1000, 1000); ctx.stroke();
   ctx.fillStyle = '#aaa'; ctx.font = '400 28px Inter'; ctx.fillText('Through Ubuntu. Collective member.', 80, 1070);
   const qrData = `https://collective.crescita.co.za?ref=${memberNum}`;
   
   if (typeof QRCode === 'undefined') {
-    status.textContent = 'QR lib loading...';
-    setTimeout(()=>drawMemberCard(memberNum), 500);
+    status.textContent = 'Loading...';
+    setTimeout(()=>drawMemberCard(memberNum), 400);
     return;
   }
   
-  QRCode.toCanvas(qrCanvas, qrData, { width: 400, margin: 1, color: { dark: '#FFFFFF', light: '#000000' } }, function (err) {
-    if (err) { status.textContent = 'QR error'; console.log(err); return; }
-    ctx.drawImage(qrCanvas, 80, 1200, 400, 400);
-    ctx.fillStyle = '#666'; ctx.font = '600 22px Inter'; ctx.fillText('SCAN TO JOIN COLLECTIVE', 80, 1650);
-    ctx.fillStyle = '#fff'; ctx.font = '700 26px Inter'; ctx.fillText(qrData, 80, 1690);
-    ctx.fillStyle = '#333'; ctx.font = '700 20px Inter'; ctx.fillText('CRESCITA COLLECTIVE • HERITAGE & HAND', 80, 1840);
+  QRCode.toCanvas(qrCanvas, qrData, { width: 500, margin: 1, color: { dark: '#FFFFFF', light: '#000000' } }, function (err) {
+    if (err) { status.textContent = 'Retrying...'; setTimeout(()=>drawMemberCard(memberNum), 500); return; }
+    // Draw QR larger and centered
+    ctx.drawImage(qrCanvas, 80, 1150, 420, 420);
+    ctx.fillStyle = '#666'; ctx.font = '700 24px Inter'; ctx.fillText('SCAN TO JOIN COLLECTIVE', 80, 1620);
+    ctx.fillStyle = '#fff'; ctx.font = '700 28px Inter'; ctx.fillText(qrData, 80, 1660);
+    ctx.fillStyle = '#444'; ctx.font = '700 20px Inter'; ctx.fillText('CRESCITA COLLECTIVE • HERITAGE & HAND', 80, 1840);
     cardReady = true;
-    status.textContent = 'Ready to share ✅';
+    status.textContent = 'Ready — tap below to save ✅';
+    document.getElementById('oneCardBtn').textContent = 'DOWNLOAD FOR SOCIALS';
   });
 }
 drawMemberCard(mn);
 
-document.getElementById('downloadCardBtn').addEventListener('click', ()=>{
-  if (!cardReady) { alert('Card still generating, wait 1 sec...'); return; }
+async function oneTapCard(){
+  const btn = document.getElementById('oneCardBtn');
+  const status = document.getElementById('cardStatus');
+  if (!cardReady) { status.textContent = 'Wait 1 sec — finishing card...'; return; }
+  btn.textContent = 'SAVING...';
   const canvas = document.getElementById('memberCardCanvas');
   try {
-    const link = document.createElement('a'); 
-    link.download = `CRESCITA-MEMBER-${mn}-STORY.png`; 
-    link.href = canvas.toDataURL('image/png'); 
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    canvas.toBlob(async (blob)=>{
+      if (!blob) {
+        // Fallback direct download
+        const link = document.createElement('a');
+        link.download = `CRESCITA-MEMBER-${mn}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.textContent = 'SAVED TO GALLERY ✅';
+        status.textContent = 'Check your gallery — share to IG Story!';
+        setTimeout(()=>btn.textContent='DOWNLOAD FOR SOCIALS', 2000);
+        return;
+      }
+      const file = new File([blob], `CRESCITA-MEMBER-${mn}.png`, { type: 'image/png' });
+      // Try native share first (opens IG, WhatsApp, etc)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: `I'm Member #${mn}`, text: `I'm Member #${mn} — BY GRACE WE GROW` });
+          btn.textContent = 'SHARED ✅';
+          status.textContent = 'Shared!';
+          setTimeout(()=>btn.textContent='DOWNLOAD FOR SOCIALS', 2000);
+          return;
+        } catch(e) {
+          // User cancelled share, fall through to download
+        }
+      }
+      // Fallback: auto download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `CRESCITA-MEMBER-${mn}-STORY.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      btn.textContent = 'SAVED TO GALLERY ✅';
+      status.textContent = 'Saved! Now post to your IG Story.';
+      setTimeout(()=>btn.textContent='DOWNLOAD FOR SOCIALS', 2500);
+    }, 'image/png', 1.0);
   } catch(e) {
-    alert('Download failed: ' + e.message + ' — Try long-press save on image');
+    status.textContent = 'Tap and hold card to save';
+    console.log(e);
   }
-});
-document.getElementById('shareCardBtn').addEventListener('click', async ()=>{
-  if (!cardReady) { alert('Card still generating...'); return; }
-  const canvas = document.getElementById('memberCardCanvas');
-  canvas.toBlob(async (blob)=>{
-    if (!blob) { document.getElementById('downloadCardBtn').click(); return; }
-    const file = new File([blob], `CRESCITA-MEMBER-${mn}.png`, { type: 'image/png' });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) { 
-      try{ await navigator.share({ files: [file], title: `I'm Member #${mn}`, text: `I'm Member #${mn} of CRESCITA COLLECTIVE` }); }catch(e){ console.log(e); } 
+}
+document.getElementById('oneCardBtn').addEventListener('click', oneTapCard);
+// Also allow tap on canvas itself
+document.getElementById('memberCardCanvas').addEventListener('click', oneTapCard);
+ }catch(e){ console.log(e); } 
     } else { 
       document.getElementById('downloadCardBtn').click(); 
     }
   }, 'image/png');
 });
-
 // === PROGRAMME LIST WITH DOWNLOAD BUTTONS - LOCKED TO september-change.pdf ===
 const FALLBACK_PDF = "/app/programmes/september-change.pdf";
 fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
