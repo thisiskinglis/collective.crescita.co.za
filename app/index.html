@@ -71,7 +71,8 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif}
 
 <div class="card" style="background:#000;color:#fff;border-color:#000">
 <h3 style="color:#fff">4. YOUR MEMBER CARD</h3><p style="color:#aaa">One tap — saves to your gallery for stories.</p>
-<canvas id="memberCardCanvas" width="1080" height="1920" style="width:100%;height:auto;max-height:420px;object-fit:contain;background:#000;border-radius:12px;display:block;margin:0 auto"></canvas><canvas id="qrTemp" width="400" height="400" style="display:none"></canvas>
+<canvas id="memberCardCanvas" width="1080" height="1920" style="width:100%!important;height:auto!important;max-height:360px!important;object-fit:contain;background:#000;border-radius:12px;display:block;margin:0 auto"></canvas>
+<canvas id="qrTemp" width="400" height="400" style="display:none"></canvas>
 <button class="btn btn-white" id="oneCardBtn" style="margin-top:14px;font-size:12px;padding:16px">DOWNLOAD FOR SOCIALS</button>
 <p id="cardStatus" style="font-size:10px;color:#777;text-align:center;margin-top:10px">Generating your card...</p>
 </div>
@@ -171,8 +172,6 @@ function drawMemberCard(memberNum){
     const btn = document.getElementById('oneCardBtn');
     if(status) status.textContent = 'Creating your card...';
     if(btn) btn.textContent = 'PREPARING...';
-    
-    // Always draw base card first - no QR needed
     ctx.fillStyle = '#000'; ctx.fillRect(0,0,1080,1920);
     ctx.strokeStyle = '#1A1A1A'; ctx.lineWidth = 2; ctx.strokeRect(30,30,1020,1860);
     ctx.fillStyle = '#fff'; ctx.font = '800 48px Syne'; ctx.fillText('CRESCITA', 80, 140);
@@ -187,54 +186,39 @@ function drawMemberCard(memberNum){
     ctx.fillStyle = '#666'; ctx.font = '700 24px Inter'; ctx.fillText('SCAN TO JOIN COLLECTIVE', 80, 1620);
     ctx.fillStyle = '#fff'; ctx.font = '700 28px Inter'; ctx.fillText(qrData, 80, 1660);
     ctx.fillStyle = '#444'; ctx.font = '700 20px Inter'; ctx.fillText('CRESCITA COLLECTIVE • HERITAGE & HAND', 80, 1840);
-    
-    // Mark ready immediately - card works even without QR
     cardReady = true;
     if(status) status.textContent = 'Ready — tap below to save ✅';
     if(btn) btn.textContent = 'DOWNLOAD FOR SOCIALS';
-    
-    // Try to add QR if library exists - but don't block
     if (typeof QRCode !== 'undefined' && qrCanvas) {
       try {
         QRCode.toCanvas(qrCanvas, qrData, { width: 500, margin: 1, color: { dark: '#FFFFFF', light: '#000000' } }, function (err) {
           if (!err) {
             try {
-              ctx.fillStyle = '#000';
-              ctx.fillRect(70, 1140, 440, 440);
+              ctx.fillStyle = '#000'; ctx.fillRect(70, 1140, 440, 440);
               ctx.drawImage(qrCanvas, 80, 1150, 420, 420);
-              if(status) status.textContent = 'Ready — tap below to save ✅';
             } catch(e) {}
           }
         });
-      } catch(e) { console.log('QR fail but card ready', e); }
+      } catch(e) {}
     }
   } catch(e) {
-    console.log('draw error', e);
     cardReady = true;
-    const status = document.getElementById('cardStatus');
-    if(status) status.textContent = 'Ready — tap to save';
   }
 }
-// Ensure mn exists and is not 000
 let mnSafe = mn;
-if (!mnSafe || mnSafe === '000' || mnSafe === 0) {
-  const saved = localStorage.getItem('crescita_member') || localStorage.getItem('memberNumber');
+if (!mnSafe || mnSafe === '000' || mnSafe === 0 || mnSafe === '0') {
+  const saved = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number');
   if (saved) mnSafe = saved;
 }
-drawMemberCard(mnSafe || mn);
-
+drawMemberCard(mnSafe || mn || '859');
 async function oneTapCard(){
   const btn = document.getElementById('oneCardBtn');
   const status = document.getElementById('cardStatus');
   const canvas = document.getElementById('memberCardCanvas');
   if(!canvas) return;
-  
-  // Always allow download even if not marked ready - your screenshot shows stuck
   if(btn) btn.textContent = 'SAVING...';
   if(status) status.textContent = 'Saving to gallery...';
-  
   try {
-    // Try blob first
     if (canvas.toBlob) {
       canvas.toBlob(async (blob)=>{
         if (!blob) {
@@ -243,16 +227,15 @@ async function oneTapCard(){
           link.href = canvas.toDataURL('image/png');
           link.click();
           if(btn) btn.textContent = 'SAVED ✅';
-          if(status) status.textContent = 'Check gallery — now share to Story!';
+          if(status) status.textContent = 'Check gallery!';
           setTimeout(()=>{ if(btn) btn.textContent='DOWNLOAD FOR SOCIALS'; }, 2500);
           return;
         }
         const file = new File([blob], `CRESCITA-MEMBER-${mnSafe}.png`, { type: 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
-            await navigator.share({ files: [file], title: `I'm Member #${mnSafe}`, text: `I'm Member #${mnSafe} — BY GRACE WE GROW` });
+            await navigator.share({ files: [file], title: `I'm Member #${mnSafe}` });
             if(btn) btn.textContent = 'SHARED ✅';
-            if(status) status.textContent = 'Shared!';
             setTimeout(()=>{ if(btn) btn.textContent='DOWNLOAD FOR SOCIALS'; }, 2000);
             return;
           } catch(e) {}
@@ -270,15 +253,12 @@ async function oneTapCard(){
         setTimeout(()=>{ if(btn) btn.textContent='DOWNLOAD FOR SOCIALS'; }, 2500);
       }, 'image/png', 1.0);
     } else {
-      // Fallback no toBlob
       const link = document.createElement('a');
       link.download = `CRESCITA-MEMBER-${mnSafe}-STORY.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
-      if(btn) btn.textContent = 'SAVED ✅';
     }
   } catch(e) {
-    console.log(e);
     try {
       const link = document.createElement('a');
       link.download = `CRESCITA-MEMBER-${mnSafe}.png`;
@@ -291,13 +271,7 @@ const btnEl = document.getElementById('oneCardBtn');
 if(btnEl) btnEl.addEventListener('click', oneTapCard);
 const canvasEl = document.getElementById('memberCardCanvas');
 if(canvasEl) canvasEl.addEventListener('click', oneTapCard);
-
- }catch(e){ console.log(e); } 
-    } else { 
-      document.getElementById('downloadCardBtn').click(); 
-    }
-  }, 'image/png');
-});
+// END MEMBER CARD
 
 // === PROGRAMME LIST WITH DOWNLOAD BUTTONS - LOCKED TO september-change.pdf ===
 const FALLBACK_PDF = "/app/programmes/september-change.pdf";
