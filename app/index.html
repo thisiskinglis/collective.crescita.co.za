@@ -70,11 +70,10 @@ html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif}
 </div>
 
 <div class="card" style="background:#000;color:#fff;border-color:#000">
-<h3 style="color:#fff">4. YOUR MEMBER CARD</h3><p style="color:#aaa">Auto-generated. Share on stories. Small preview, big download.</p>
+<h3 style="color:#fff">4. YOUR MEMBER CARD</h3><p style="color:#aaa">One tap — saves to your gallery for stories.</p>
 <canvas id="memberCardCanvas" width="1080" height="1920"></canvas><canvas id="qrTemp" width="400" height="400" style="display:none"></canvas>
-<button class="btn btn-white" id="downloadCardBtn" style="margin-top:12px">DOWNLOAD FOR IG STORY</button>
-<button class="btn" id="shareCardBtn" style="margin-top:10px;background:transparent;color:#fff;border-color:#444">SHARE</button>
-<p id="cardStatus" style="font-size:9px;color:#666;text-align:center;margin-top:8px"></p>
+<button class="btn btn-white" id="oneCardBtn" style="margin-top:14px;font-size:12px;padding:16px">DOWNLOAD FOR SOCIALS</button>
+<p id="cardStatus" style="font-size:10px;color:#777;text-align:center;margin-top:10px">Generating your card...</p>
 </div>
 
 <div class="card"><h3>5. GROWTH CALL — 30 MIN</h3><a class="btn btn-outline" id="growthCall" href="#" target="_blank">BOOK MY CALL</a></div>
@@ -260,6 +259,7 @@ document.getElementById('memberCardCanvas').addEventListener('click', oneTapCard
     }
   }, 'image/png');
 });
+
 // === PROGRAMME LIST WITH DOWNLOAD BUTTONS - LOCKED TO september-change.pdf ===
 const FALLBACK_PDF = "/app/programmes/september-change.pdf";
 fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
