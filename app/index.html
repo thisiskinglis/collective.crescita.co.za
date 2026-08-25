@@ -227,11 +227,11 @@ document.getElementById('shareCardBtn').addEventListener('click', async ()=>{
   }, 'image/png');
 });
 
-// === PROGRAMME LIST WITH DOWNLOAD BUTTONS ===
+// === PROGRAMME LIST WITH DOWNLOAD BUTTONS - LOCKED TO september-change.pdf ===
+const FALLBACK_PDF = "/app/programmes/september-change.pdf";
 fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
   if(!list || !list.length) {
-    document.getElementById('programmeLatest').innerHTML='<p style="font-size:11px;color:#999">No programmes yet</p>';
-    return;
+    list = [{date:"SEPTEMBER 2025", title:"CHANGE", file:FALLBACK_PDF}];
   }
   const latest=list[0];
   document.getElementById('programmeLatest').innerHTML=`
@@ -239,19 +239,28 @@ fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
     <p><b>${latest.title}</b></p>
     <div style="display:flex;gap:8px;margin-top:8px">
       <a class="btn" href="${latest.file}" target="_blank" style="flex:1">VIEW</a>
-      <a class="btn btn-outline" href="${latest.file}" download style="flex:1">DOWNLOAD</a>
+      <a class="btn btn-outline" href="${latest.file}" download="CRESCITA-CHANGE-Sept.pdf" style="flex:1">DOWNLOAD</a>
     </div><br>`;
   document.getElementById('pdfList').innerHTML=list.map(p=>`
     <div class="prog-item">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:11px;font-weight:700">${p.date} — ${p.title}</span>
-        <a href="${p.file}" download style="font-size:10px;border:1px solid #000;padding:6px 12px;border-radius:999px;text-decoration:none;color:#000;font-weight:800">DOWNLOAD</a>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <span style="font-size:11px;font-weight:700;flex:1">${p.date} — ${p.title}</span>
+        <a href="${p.file}" download="CRESCITA-${p.title}.pdf" style="font-size:10px;border:1.5px solid #000;background:#000;color:#fff;padding:8px 14px;border-radius:999px;text-decoration:none;font-weight:800;white-space:nowrap">DOWNLOAD</a>
       </div>
     </div>`).join('');
 }).catch((e)=>{
-  console.log('prog fetch err', e);
-  document.getElementById('programmeLatest').innerHTML='<p style="font-size:11px;color:#999">Programme coming soon</p>';
+  console.log('prog fetch err, using fallback', e);
+  const fallback = {date:"SEPTEMBER 2025", title:"CHANGE", file:FALLBACK_PDF};
+  document.getElementById('programmeLatest').innerHTML=`
+    <div class="tag">${fallback.date}</div>
+    <p><b>${fallback.title}</b></p>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <a class="btn" href="${fallback.file}" target="_blank" style="flex:1">VIEW</a>
+      <a class="btn btn-outline" href="${fallback.file}" download="CRESCITA-CHANGE-Sept.pdf" style="flex:1">DOWNLOAD</a>
+    </div><br>`;
+  document.getElementById('pdfList').innerHTML=`<div class="prog-item"><span style="font-size:11px">Tap DOWNLOAD to get September CHANGE</span></div>`;
 });
+
 
 // BLOCK DOUBLE-TAP + PINCH ZOOM - TRUE APP FEEL
 document.addEventListener('touchstart', function(e){ if(e.touches.length>1){ e.preventDefault(); } }, {passive:false});
