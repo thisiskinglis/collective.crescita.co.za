@@ -5,8 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>Welcome — CRESCITA</title>
-<link rel="manifest" href="app/manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- OG Image for WhatsApp / IG -->
+<meta property="og:title" content="CRESCITA COLLECTIVE">
+<meta property="og:description" content="By Grace We Grow. R99 = 100% to Community Fund. Tap to join Founder #859">
+<meta property="og:image" content="https://collective.crescita.co.za/og-image.jpg">
+<meta property="og:url" content="https://collective.crescita.co.za/welcome.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://collective.crescita.co.za/og-image.jpg">
+
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:#fff;font-family:Inter,sans-serif}
@@ -17,79 +28,107 @@ html,body{height:100%;background:#fff;font-family:Inter,sans-serif}
 .card{border:1px solid #000;border-radius:20px;padding:16px;width:100%;margin-bottom:20px}
 .stat{display:flex;justify-content:space-between;font-size:11px;color:#888;margin:6px 0}
 .stat b{color:#000}
-.btn{border:1.5px solid #000;background:#000;color:#fff;padding:18px 28px;border-radius:999px;font-size:11px;letter-spacing:2px;font-weight:800;text-decoration:none;display:block;width:100%;margin-bottom:12px;cursor:pointer;text-align:center}
+.btn{border:1.5px solid #000;background:#000;color:#fff;padding:18px 28px;border-radius:999px;font-size:11px;letter-spacing:2px;font-weight:800;text-decoration:none;display:block;width:100%;margin-bottom:12px;cursor:pointer;text-align:center;transition:transform 0.15s}
+.btn:active{transform:scale(0.98)}
 .btn-outline{background:#fff;color:#000}
 .hint{font-size:11px;color:#999;margin-top:16px;line-height:1.5;display:none}
 .hint.show{display:block}
-#manual{font-size:12px;color:#000;background:#F6F6F6;border:1px dashed #000;border-radius:12px;padding:12px;margin-top:12px;display:none}
+#manual{font-size:12px;color:#000;background:#F6F6F6;border:1px dashed #000;border-radius:12px;padding:12px;margin-top:12px;display:none;line-height:1.5}
 #manual.show{display:block}
+.tag{font-size:9px;letter-spacing:2px;border:1px solid #222;padding:6px 12px;border-radius:20px;color:#666;display:inline-block;margin-bottom:16px}
 </style>
 <script>
-// === MEMBER NUMBER LOGIC ===
+// === MEMBER NUMBER LOGIC — MERGED + FOUNDER LOCK ===
 (function(){
   const params = new URLSearchParams(window.location.search);
-  const forceFresh = params.has('fresh') || params.has('new');
-  if(forceFresh || !localStorage.getItem('member_number')){
-    const num = Math.floor(700 + Math.random()*200); // 700-899
-    localStorage.setItem('member_number', num);
+  const ref = params.get('ref') || params.get('member');
+  if(ref) localStorage.setItem('collective_ref', ref);
+
+  // Support both old and new keys
+  let mn = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number');
+  
+  // Founder lock
+  if(mn === '859' || localStorage.getItem('collective_member_number') === '859'){
+    mn = '859';
+  } else if(!mn || params.has('fresh') || params.has('new') || mn==='000' || mn==='042'){
+    // New range 860-9860 (was 700-899 old)
+    mn = String(Math.floor(860 + Math.random()*9000));
   }
+
+  // Save to BOTH keys for backwards compatibility
+  localStorage.setItem('collective_member_number', mn);
+  localStorage.setItem('member_number', mn);
   localStorage.setItem('collective_member','true');
+  localStorage.setItem('collective_payment_intent','1');
   if(!localStorage.getItem('collective_member_since')){
     localStorage.setItem('collective_member_since', new Date().toISOString());
   }
-  // clean URL after we read it
-  if(params.has('joined') || params.has('paid') || params.has('success') || params.has('fresh') || params.has('new')){
-    history.replaceState({},'', 'welcome.html');
+
+  // Clean URL after read but keep joined for analytics if needed
+  if(params.has('paid') || params.has('success') || params.has('fresh') || params.has('new')){
+    history.replaceState({},'', 'welcome.html?joined=true');
   }
 })();
 </script>
 </head>
 <body>
 <div class="wrap">
-  <img src="crescita_black_trans.png" class="logo" onerror="this.style.display='none'">
+  <img src="/crescita_black_trans.png" class="logo" onerror="this.style.display='none'">
+  <div class="tag">PAYMENT SUCCESSFUL • R99 RECEIVED</div>
   <div class="h1">WELCOME TO THE COLLECTIVE</div>
-  <div class="sub">You just funded the community. Now let's grow you.<br><br><b>Member #<span id="mnum">042</span> • R99/month • Active</b></div>
+  <div class="sub">You just funded the community. Now let's grow you.<br><br><b>Member #<span id="mnum">042</span> • R99 • Active</b><br><span style="font-size:11px;color:#999">R99 = 100% to Community Fund</span></div>
   
   <div class="card">
     <div class="stat"><span>Status</span><span><b>Active ✓</b></span></div>
-    <div class="stat"><span>Plan</span><span><b>R99 / month</b></span></div>
+    <div class="stat"><span>Plan</span><span><b>R99</b></span></div>
     <div class="stat"><span>Fund allocation</span><span><b>100% to community</b></span></div>
+    <div class="stat"><span>Member #</span><span><b id="mnum2">042</b></span></div>
   </div>
 
   <a class="btn" id="installBtn" href="#">INSTALL APP</a>
   <div id="manual">Chrome didn't pop the install box — do it manually:<br><b>Tap 3 dots top right → Add to Home screen / Install app</b><br>Then open CRESCITA from your home screen.</div>
-  <a class="btn btn-outline" href="app/index.html">OPEN MEMBER APP →</a>
+  <a class="btn btn-outline" id="openAppBtn" href="/app/">OPEN MEMBER APP →</a>
   
-  <div class="hint" id="iosHint">On iPhone: Open member app, then tap Share ↑ → Add to Home Screen</div>
+  <div class="hint" id="iosHint">On iPhone: Tap OPEN MEMBER APP, then tap Share ↑ → Add to Home Screen</div>
   <div class="hint" id="standHint">App already installed — open it from your home screen.</div>
-  <div class="hint show">Your CRESCITA icon will appear on your home screen. Tap it anytime.</div>
+  <div class="hint show" id="autoHint">Your CRESCITA icon will appear on your home screen. Auto-opening app in 3 sec...</div>
 </div>
 
 <script>
 let deferredPrompt = null;
 const installBtn = document.getElementById('installBtn');
+const openAppBtn = document.getElementById('openAppBtn');
 const iosHint = document.getElementById('iosHint');
 const manual = document.getElementById('manual');
 const standHint = document.getElementById('standHint');
+const autoHint = document.getElementById('autoHint');
 
 const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-// show member number
+function getMn(){
+  return localStorage.getItem('collective_member_number') || localStorage.getItem('member_number') || '042';
+}
+
+// show member number everywhere
 document.addEventListener('DOMContentLoaded',()=>{
-  const num = localStorage.getItem('member_number') || '042';
-  const el = document.getElementById('mnum');
-  if(el) el.textContent = num;
+  const num = getMn();
+  document.getElementById('mnum').textContent = num;
+  document.getElementById('mnum2').textContent = num;
+  openAppBtn.href = '/app/?member=' + num;
 });
 
 // if already installed as app, don't show install
 if(isStandalone){
   installBtn.style.display = 'none';
   standHint.classList.add('show');
+  autoHint.style.display = 'none';
+  // If already standalone, go straight to app
+  setTimeout(()=>{ window.location.href = '/app/?member=' + getMn(); }, 1000);
 } else if(isIos){
   installBtn.textContent = "OPEN MEMBER APP TO INSTALL";
   iosHint.classList.add('show');
-  installBtn.onclick = (e) => { e.preventDefault(); location.href='app/index.html'; };
+  installBtn.onclick = (e) => { e.preventDefault(); location.href='/app/?member=' + getMn(); };
 } else {
   // Android/Chrome - wait for beforeinstallprompt
   window.addEventListener('beforeinstallprompt', (e) => {
@@ -107,18 +146,15 @@ if(isStandalone){
       deferredPrompt = null;
       if(choice.outcome === 'accepted'){
         installBtn.textContent = "INSTALLED ✓ NOW OPEN APP";
-        setTimeout(()=>location.href='app/index.html',800);
+        setTimeout(()=>location.href='/app/?member=' + getMn(),800);
       }
     } else {
-      // No prompt available - show manual instructions, don't just redirect
       manual.classList.add('show');
-      // after 1 sec, also allow them to go to app
       setTimeout(()=>{ installBtn.textContent = "OPEN MEMBER APP →"; }, 500);
-      installBtn.onclick = (ev) => { ev.preventDefault(); location.href='app/index.html'; };
+      installBtn.onclick = (ev) => { ev.preventDefault(); location.href='/app/?member=' + getMn(); };
     }
   });
 
-  // If after 2.5 sec no prompt came, show manual hint automatically
   setTimeout(()=>{
     if(!deferredPrompt && !isStandalone){
       manual.classList.add('show');
@@ -126,10 +162,19 @@ if(isStandalone){
   }, 2500);
 }
 
+// Auto redirect to app after 3 sec (so Stripe → welcome → app flow works)
+setTimeout(()=>{
+  if(!isStandalone){
+    window.location.href = '/app/?member=' + getMn();
+  }
+}, 3500);
+
 // register SW from both possible locations
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('app/sw.js').catch(()=>{
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.register('/sw.js').catch(()=>{
+    navigator.serviceWorker.register('/app/sw.js').catch(()=>{
+      navigator.serviceWorker.register('app/sw.js').catch(()=>{});
+    });
   });
 }
 </script>
