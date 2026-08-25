@@ -18,33 +18,54 @@
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#fff;font-family:Inter,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.wrap{max-width:420px;width:100%;text-align:center}
-.logo{width:200px;margin:0 auto 24px;display:block}
-h1{font-family:Syne,sans-serif;font-size:48px;line-height:0.9;letter-spacing:-2px;margin-bottom:12px}
-h1 span{color:#666}
-p{color:#999;font-size:14px;line-height:1.6;margin-bottom:24px}
-.btn{display:block;background:#fff;color:#000;padding:18px 24px;border-radius:999px;font-weight:800;font-size:12px;letter-spacing:2px;text-decoration:none;margin-bottom:12px}
-.btn-outline{background:transparent;color:#fff;border:1.5px solid #333}
-.tag{font-size:9px;letter-spacing:2px;border:1px solid #222;padding:6px 12px;border-radius:20px;color:#666;display:inline-block;margin-bottom:16px}
+html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif}
+body{display:flex;align-items:center;justify-content:center}
+.wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;min-height:100vh;max-width:420px;width:100%}
+.brand{font-family:Syne,sans-serif;font-weight:800;font-size:20px;letter-spacing:4px;margin-bottom:32px;color:#000}
+.btn-join{background:#000;color:#fff;border:1.5px solid #000;padding:16px 36px;border-radius:999px;font-size:11px;letter-spacing:1.8px;font-weight:800;cursor:pointer;display:inline-block;text-align:center;transition:transform 0.15s;min-width:240px}
+.btn-join:active{transform:scale(0.96)}
+.perks{margin-top:20px;font-size:11px;color:#666;line-height:1.5;max-width:300px;text-align:center;letter-spacing:0.2px}
+.help-link{margin-top:20px;font-size:10px;color:#999;text-decoration:none;letter-spacing:0.5px;border-bottom:1px solid #EDEDED;padding-bottom:2px}
+.help-link:hover{color:#000;border-color:#000}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <img src="/crescita_white_trans.png" class="logo" alt="CRESCITA">
-  <div class="tag">R99 = 100% TO COMMUNITY FUND</div>
-  <h1>BY GRACE<br><span>WE GROW</span></h1>
-  <p>Collective for moms who want to grow their kids through movement, heritage & hand. Join Founder #859.</p>
-  <a class="btn" href="/app/">OPEN APP →</a>
-  <a class="btn btn-outline" href="/install-help.html">HOW TO INSTALL ON IPHONE</a>
-  <p style="margin-top:20px;font-size:10px;color:#444">collective.crescita.co.za • Founder #859</p>
+  <div class="brand">CRESCITA</div>
+  <button class="btn-join" id="joinBtn">JOIN CRESCITA COLLECTIVE</button>
+  <div class="perks">By joining you get: Private WhatsApp + 15% off + Growth Call + Performance Programme + Member Card.</div>
+  <a class="help-link" href="/install-help.html">How to install after joining →</a>
 </div>
 <script>
-// auto redirect if already installed as PWA or coming back
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  window.location.href = '/app/';
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/8x2cN615R9gPeVFb2i3oA0j";
+function getOrCreateMember(){
+  let mn = localStorage.getItem('collective_member_number');
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref') || params.get('member');
+  if(ref) localStorage.setItem('collective_ref', ref);
+  if(!mn || mn==='000' || mn==='0'){
+    if(localStorage.getItem('collective_member_number')==='859') return '859';
+    mn = String(Math.floor(860 + Math.random()*9000));
+    localStorage.setItem('collective_member_number', mn);
+  }
+  return mn;
+}
+document.getElementById('joinBtn').addEventListener('click', ()=>{
+  const currentMn = getOrCreateMember();
+  if(localStorage.getItem('collective_payment_intent')){
+    window.location.href = '/app/?member=' + currentMn;
+    return;
+  }
+  const stripeUrl = STRIPE_PAYMENT_LINK + (STRIPE_PAYMENT_LINK.includes('?') ? '&' : '?') + 'client_reference_id=' + currentMn;
+  localStorage.setItem('collective_payment_intent','1');
+  localStorage.setItem('collective_payment_member', currentMn);
+  window.location.href = stripeUrl;
+});
+if(window.matchMedia('(display-mode: standalone)').matches && localStorage.getItem('collective_member_number')){
+  window.location.href = '/app/?member=' + localStorage.getItem('collective_member_number');
 }
 </script>
 </body>
