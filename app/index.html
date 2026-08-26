@@ -4,352 +4,189 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#ffffff">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="/manifest.json">
-<title>CRESCITA</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<title>CRESCITA COLLECTIVE</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
-html{overscroll-behavior:none;touch-action:manipulation;-webkit-text-size-adjust:100%;height:100%;width:100%;position:fixed;overflow:hidden}
-body{overscroll-behavior:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;position:fixed;overflow:hidden;width:100%;height:100dvh;height:100vh}
-.app{height:100dvh;height:100vh;overflow:hidden;display:flex;flex-direction:column}
-.view{overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;user-select:text;-webkit-user-select:text}
-img,canvas{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;background:#fff;color:#000;font-family:Inter,sans-serif}
-.app{max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;border-left:1px solid #EDEDED;border-right:1px solid #EDEDED}
-.top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #EDEDED;position:sticky;top:0;background:#fff;z-index:10}
-.logo{height:18px}
-.member{font-size:9px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:5px 10px;border-radius:20px;background:#F7F7F7;font-weight:700}
-.view{flex:1;overflow-y:auto;padding:20px 16px 120px}
-.h1{font-family:Syne,sans-serif;font-size:38px;line-height:.9;letter-spacing:-2px;margin:10px 0}
-.sub{font-size:13px;color:#666;line-height:1.5;margin-bottom:20px}
-.card{border:1.5px solid #000;border-radius:24px;padding:20px;margin-bottom:16px;overflow:hidden}
-.card h3{font-family:Syne,sans-serif;font-size:18px;margin-bottom:6px}
-.card p{font-size:12px;color:#666;line-height:1.5;margin-bottom:14px}
-.btn{border:1.5px solid #000;background:#000;color:#fff;padding:14px 20px;border-radius:999px;font-size:11px;letter-spacing:1.5px;font-weight:800;display:block;text-align:center;text-decoration:none;width:100%;cursor:pointer}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;background:#EDEDED;font-family:Inter,sans-serif;overflow:hidden;position:fixed;width:100%}
+.app{max-width:480px;margin:0 auto;height:100dvh;background:#fff;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.06),0 20px 80px rgba(0,0,0,.12)}
+.top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #EDEDED;background:#fff;z-index:10}
+.logo{font-family:Syne;font-weight:800;font-size:17px;letter-spacing:-0.03em}
+.badge{height:32px;padding:0 14px;border-radius:999px;border:1px solid #E0E0E0;background:#F7F7F7;font-size:9px;font-weight:700;letter-spacing:1.5px;display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:#00E676;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.view{flex:1;overflow-y:auto;padding:20px 16px 100px}
+.view::-webkit-scrollbar{display:none}
+.card{border:1.5px solid #000;border-radius:28px;padding:22px;margin-bottom:16px;background:#fff;position:relative;overflow:hidden}
+.card-black{background:#000;color:#fff;border-color:#000}
+.btn{height:48px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;letter-spacing:1.5px;width:100%;text-decoration:none;cursor:pointer;border:1.5px solid #000;background:#000;color:#fff}
 .btn-white{background:#fff;color:#000}
-.btn-outline{background:#fff;color:#000}
-.tag{font-size:8px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:4px 9px;border-radius:20px;color:#888;display:inline-block;margin-bottom:10px}
-.code-row{display:flex;flex-direction:column;gap:10px;margin:12px 0;width:100%}
-.code-box{border:1.5px dashed #000;border-radius:14px;padding:12px 18px;font-family:Syne,sans-serif;font-weight:800;letter-spacing:2px;font-size:15px;width:100%;text-align:center;word-break:break-all}
-.copy-btn{border:1.5px solid #000;background:#000;color:#fff;padding:14px 16px;border-radius:999px;font-size:11px;font-weight:800;cursor:pointer;width:100%;letter-spacing:1px}
-#memberCardCanvas{width:auto!important;max-width:100%!important;height:360px!important;max-height:360px!important;object-fit:contain;display:block;margin:0 auto;border-radius:16px;background:#000}
-.push-dot{width:8px;height:8px;border-radius:50%;background:#00C950;display:inline-block;margin-right:6px;animation:pulse 2s infinite}
-@keyframes pulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
-.prog-item{padding:12px 0;border-bottom:1px solid #F0F0F0;display:flex;flex-direction:column;gap:8px}
-.prog-item:last-child{border:0}
+.btn:active{transform:scale(.98)}
+.wallet{background:#000;color:#fff;border-radius:36px;padding:26px;position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.08) inset}
+.bottom{height:84px;background:#fff;border-top:1px solid #EDEDED;display:flex;align-items:center;padding:0 12px 18px;position:relative;z-index:20}
+.tabs{display:flex;gap:4px;background:#F2F2F2;border-radius:999px;padding:4px;height:52px;width:100%;border:1px solid rgba(0,0,0,.04)}
+.tab-btn{flex:1;border-radius:999px;border:none;background:transparent;color:rgba(0,0,0,.45);font-size:11px;font-weight:600;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .3s}
+.tab-btn.active{background:#000;color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#000;color:#fff;padding:12px 18px;border-radius:999px;font-size:12px;font-weight:700;z-index:100}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="top"><img src="/crescita_black_trans.png" class="logo"><div class="member" id="memberBadge">MEMBER #000</div></div>
-<div class="view">
-<div class="tag">R99 = 100% TO COMMUNITY FUND</div>
-<div class="h1">BY GRACE<br><span style="color:#999">WE GROW</span></div>
-<div class="sub">You contribute. We grow together. 1 tap to get in.</div>
-
-<div class="card" id="liveDropCard" style="display:none;background:#000;color:#fff;border-color:#000;position:relative;overflow:hidden">
-<div id="liveDropContent"></div>
-</div>
-
-
-<div class="card" style="background:#000;color:#fff;border-color:#000">
-<h3 style="color:#fff">1. PRIVATE COMMUNITY</h3>
-<p style="color:#aaa">Tap below — you’ll join CRESCITA + COLLECTIVE automatically.</p>
-<a class="btn btn-white" href="https://chat.whatsapp.com/IPJFzWhdQYRLRs7T6A8B9N" target="_blank">JOIN CRESCITA COLLECTIVE COMMUNITY</a>
-</div>
-
-<div class="card"><h3>2. MEMBER PERK — 15% OFF</h3><p>Use at checkout on crescita.co.za</p><div class="code-row"><div class="code-box" id="discountCode">COLLECTIVE15</div><button class="copy-btn" id="copyBtn">COPY CODE</button></div></div>
-
-<div class="card" id="pushCard" style="border-color:#00C950">
-<h3><span class="push-dot"></span>3. GET PINGED FIRST</h3>
-<p>Enable push so new Programme drops ping your phone like IG.</p>
-<button class="btn" id="enablePushBtn">ENABLE NOTIFICATIONS</button>
-<p id="pushStatus" style="font-size:10px;color:#999;text-align:center;margin-top:10px">Not enabled yet</p>
-</div>
-
-<div class="card" style="background:#000;color:#fff;border-color:#000">
-<h3 style="color:#fff">4. YOUR MEMBER CARD</h3><p style="color:#aaa">One tap — saves to your gallery for stories.</p>
-<div style="height:380px;overflow:hidden;background:#000;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:10px 0">
-<canvas id="memberCardCanvas" width="1080" height="1920" style="height:360px!important;width:auto!important;max-width:100%!important;object-fit:contain;background:#000;border-radius:12px;display:block"></canvas>
-</div>
-<canvas id="qrTemp" width="400" height="400" style="display:none"></canvas>
-<button class="btn btn-white" id="oneCardBtn" style="margin-top:14px;font-size:12px;padding:16px">DOWNLOAD FOR SOCIALS</button>
-<p id="cardStatus" style="font-size:10px;color:#777;text-align:center;margin-top:10px">Generating your card...</p>
-</div>
-
-<div class="card"><h3>5. GROWTH CALL — 30 MIN</h3><a class="btn btn-outline" id="growthCall" href="#" target="_blank">BOOK MY CALL</a></div>
-<div class="card"><h3>6. PERFORMANCE PROGRAMME</h3><div id="programmeLatest"></div><div id="pdfList"></div></div>
-</div>
+<div class="top"><div class="logo">CRESCITA COLLECTIVE</div><div class="badge"><span class="dot"></span><span id="badge">MEMBER #...</span></div></div>
+<div class="view" id="view"></div>
+<div class="bottom"><div class="tabs">
+<button class="tab-btn active" id="b-home" onclick="go('home')">HOME</button>
+<button class="tab-btn" id="b-card" onclick="go('card')">CARD</button>
+<button class="tab-btn" id="b-prog" onclick="go('prog')">PROGRAMME</button>
+<button class="tab-btn" id="b-perks" onclick="go('perks')">PERKS</button>
+</div></div>
 </div>
 <script>
-const DISCOUNT_CODE = "COLLECTIVE15";
-const VAPID_PUBLIC = "BMcqs2isrcd8Qsa1qCIYhA8Ls5EBeWFHc7ysXrOTeLfW8ax6ht8FsgNAJNk13T-1lFnaC1cwyL1essT2pZrVjHo";
-const WORKER_URL = "https://white-resonance-a4ab.thisistrinary.workers.dev";
+const WA_COMM = "https://chat.whatsapp.com/IPJFzWhdQYRLRs7T6A8B9N";
+const DISCOUNT = "COLLECTIVE15";
+const WORKER = "https://white-resonance-a4ab.thisistrinary.workers.dev";
+const VAPID = "BMcqs2isrcd8Qsa1qCIYhA8Ls5EBeWFHc7ysXrOTeLfW8ax6ht8FsgNAJNk13T-1lFnaC1cwyL1essT2pZrVjHo";
 
-// === MEMBER NUMBER LOGIC - 859 LOCKED FOR FOUNDER ===
-const params = new URLSearchParams(window.location.search);
-const urlMember = params.get('member') || params.get('ref');
-let mn = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number') || urlMember;
-if (!mn) {
-  mn = String(Math.floor(860 + Math.random() * 9000));
-  localStorage.setItem('collective_member_number', mn);
-}
-if (localStorage.getItem('collective_member_number') === '859' || mn === '859' || urlMember === '859') {
-  mn = '859';
-  localStorage.setItem('collective_member_number', '859');
-} else if (urlMember) {
-  localStorage.setItem('collective_member_number', urlMember);
-  mn = urlMember;
-}
+let mn = null;
 
-document.getElementById('memberBadge').textContent='MEMBER #'+mn;
-document.getElementById('discountCode').textContent = DISCOUNT_CODE;
-document.getElementById('growthCall').href = 'https://wa.me/27619757042?text=' + encodeURIComponent('Hi I\'m Member #' + mn + ' - I want to book my Growth Call');
-document.getElementById('copyBtn').addEventListener('click', ()=>{ 
-  navigator.clipboard.writeText(DISCOUNT_CODE).then(()=>{
-    const b=document.getElementById('copyBtn'); 
-    b.textContent="COPIED! ✅"; 
-    setTimeout(()=>b.textContent="COPY CODE",1500); 
-  });
-});
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
-  return outputArray;
-}
-
-// === PUSH WITH KV SAVE - VERIFIED ===
-const pushBtn = document.getElementById('enablePushBtn');
-const pushStatus = document.getElementById('pushStatus');
-async function updatePushUI(){
-  if (!('Notification' in window)) { pushStatus.textContent = 'Not supported'; return; }
-  if (Notification.permission === 'granted') {
-    pushStatus.textContent = '✅ Enabled — you\'ll get pings first';
-    pushBtn.textContent = 'NOTIFICATIONS ON'; pushBtn.style.background = '#00C950'; pushBtn.style.borderColor = '#00C950';
-  } else if (Notification.permission === 'denied') {
-    pushStatus.textContent = 'Blocked — enable in browser settings';
+async function initMemberNumber(){
+  const params = new URLSearchParams(location.search);
+  const urlMember = params.get('member') || params.get('ref') || params.get('member_number') || params.get('id');
+  const ls1 = localStorage.getItem('collective_member_number');
+  const ls2 = localStorage.getItem('member_number');
+  
+  // FOUNDER LOCK - if you are 859, stay 859 forever
+  if(ls1 === '859' || ls2 === '859' || urlMember === '859'){
+    mn = '859';
+    localStorage.setItem('collective_member_number','859');
+    localStorage.setItem('member_number','859');
+    document.getElementById('badge').textContent = 'MEMBER #859';
+    return;
   }
-}
-async function enablePush(){
-  try{
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') { pushStatus.textContent = 'Permission denied'; return; }
-    const reg = await navigator.serviceWorker.register('/sw.js');
-    await navigator.serviceWorker.ready;
-    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC) });
-    pushStatus.textContent = 'Saving to KV...';
-    try{
-      await fetch(`${WORKER_URL}/api/save-subscription`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ member: mn, subscription: sub, site: 'collective.crescita.co.za' })
-      });
-      pushStatus.textContent = `✅ Enabled as Member #${mn} — saved to KV`;
-    }catch(e){
-      pushStatus.textContent = 'Enabled locally — KV save failed, check Worker';
-      console.log('SAVE FAILED', e);
-      localStorage.setItem('push_subscription', JSON.stringify(sub));
-    }
-    pushBtn.textContent = 'NOTIFICATIONS ON'; pushBtn.style.background = '#00C950'; pushBtn.style.borderColor = '#00C950';
-    setTimeout(()=>{ reg.showNotification('CRESCITA COLLECTIVE', { body: `Welcome Member #${mn} — notifications ON.`, icon: '/icon-512.png' }); }, 800);
-  }catch(err){ pushStatus.textContent = 'Error: ' + err.message; }
-}
-pushBtn.addEventListener('click', enablePush);
-updatePushUI();
-
-// === MEMBER CARD - ONE BUTTON SIMPLE - FIXED SMALL + ALWAYS WORKS ===
-let cardReady = false;
-function drawMemberCard(memberNum){
-  try {
-    const canvas = document.getElementById('memberCardCanvas');
-    if(!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const qrCanvas = document.getElementById('qrTemp');
-    const status = document.getElementById('cardStatus');
-    const btn = document.getElementById('oneCardBtn');
-    if(status) status.textContent = 'Creating your card...';
-    if(btn) btn.textContent = 'PREPARING...';
-    ctx.fillStyle = '#000'; ctx.fillRect(0,0,1080,1920);
-    ctx.strokeStyle = '#1A1A1A'; ctx.lineWidth = 2; ctx.strokeRect(30,30,1020,1860);
-    ctx.fillStyle = '#fff'; ctx.font = '800 48px Syne'; ctx.fillText('CRESCITA', 80, 140);
-    ctx.font = '600 22px Inter'; ctx.fillStyle = '#888'; ctx.fillText('R99 = 100% TO COMMUNITY FUND', 80, 190);
-    ctx.fillStyle = '#fff'; ctx.font = '800 110px Syne'; ctx.fillText('BY GRACE', 80, 360);
-    ctx.fillStyle = '#555'; ctx.fillText('WE GROW', 80, 480);
-    ctx.fillStyle = '#fff'; ctx.font = '800 90px Syne'; ctx.fillText('MEMBER', 80, 720);
-    ctx.font = '800 200px Syne'; ctx.fillText(`#${memberNum}`, 80, 920);
-    ctx.strokeStyle = '#222'; ctx.beginPath(); ctx.moveTo(80, 1000); ctx.lineTo(1000, 1000); ctx.stroke();
-    ctx.fillStyle = '#aaa'; ctx.font = '400 28px Inter'; ctx.fillText('Through Ubuntu. Collective member.', 80, 1070);
-    const qrData = `https://collective.crescita.co.za?ref=${memberNum}`;
-    ctx.fillStyle = '#666'; ctx.font = '700 24px Inter'; ctx.fillText('SCAN TO JOIN COLLECTIVE', 80, 1620);
-    ctx.fillStyle = '#fff'; ctx.font = '700 28px Inter'; ctx.fillText(qrData, 80, 1660);
-    ctx.fillStyle = '#444'; ctx.font = '700 20px Inter'; ctx.fillText('CRESCITA COLLECTIVE • HERITAGE & HAND', 80, 1840);
-    cardReady = true;
-    if(status) status.textContent = 'Ready — tap below to save ✅';
-    if(btn) btn.textContent = 'DOWNLOAD FOR SOCIALS';
-    if (typeof QRCode !== 'undefined' && qrCanvas) {
-      try {
-        QRCode.toCanvas(qrCanvas, qrData, { width: 500, margin: 1, color: { dark: '#FFFFFF', light: '#000000' } }, function (err) {
-          if (!err) {
-            try {
-              ctx.fillStyle = '#000'; ctx.fillRect(70, 1140, 440, 440);
-              ctx.drawImage(qrCanvas, 80, 1150, 420, 420);
-            } catch(e) {}
-          }
-        });
-      } catch(e) {}
-    }
-  } catch(e) {
-    cardReady = true;
-  }
-}
-let mnSafe = mn;
-if (!mnSafe || mnSafe === '000' || mnSafe === 0 || mnSafe === '0') {
-  const saved = localStorage.getItem('collective_member_number') || localStorage.getItem('member_number');
-  if (saved) mnSafe = saved;
-}
-drawMemberCard(mnSafe || mn || '859');
-async function oneTapCard(){
-  const btn = document.getElementById('oneCardBtn');
-  const status = document.getElementById('cardStatus');
-  const canvas = document.getElementById('memberCardCanvas');
-  if(!canvas) return;
-  if(btn) btn.textContent = 'SAVING...';
-  if(status) status.textContent = 'Saving to gallery...';
-  try {
-    if (canvas.toBlob) {
-      canvas.toBlob(async (blob)=>{
-        if (!blob) {
-          const link = document.createElement('a');
-          link.download = `CRESCITA-MEMBER-${mnSafe}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-          if(btn) btn.textContent = 'SAVED ✅';
-          if(status) status.textContent = 'Check gallery!';
-          setTimeout(()=>{ if(btn) btn.textContent='DOWNLOAD FOR SOCIALS'; }, 2500);
-          return;
-        }
-        const file = new File([blob], `CRESCITA-MEMBER-${mnSafe}.png`, { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({ files: [file], title: `I'm Member #${mnSafe}` });
-            if(btn) btn.textContent = 'SHARED ✅';
-            setTimeout(()=>{ if(btn) btn.textContent='DOWNLOAD FOR SOCIALS'; }, 2000);
-            return;
-          } catch(e) {}
-        }
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `CRESCITA-MEMBER-${mnSafe}-STORY.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        if(btn) btn.textContent = 'SAVED TO GALLERY ✅';
-        if(status) status.textContent = 'Saved! Now post to IG Story.';
-        setTimeout(()=>{ if(btn) btn.textContent='DOWNLOAD FOR SOCIALS'; }, 2500);
-      }, 'image/png', 1.0);
-    } else {
-      const link = document.createElement('a');
-      link.download = `CRESCITA-MEMBER-${mnSafe}-STORY.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    }
-  } catch(e) {
-    try {
-      const link = document.createElement('a');
-      link.download = `CRESCITA-MEMBER-${mnSafe}.png`;
-      link.href = canvas.toDataURL();
-      link.click();
-    } catch(err) {}
-  }
-}
-const btnEl = document.getElementById('oneCardBtn');
-if(btnEl) btnEl.addEventListener('click', oneTapCard);
-const canvasEl = document.getElementById('memberCardCanvas');
-if(canvasEl) canvasEl.addEventListener('click', oneTapCard);
-
-
-// === LIVE DROP / ANNOUNCEMENTS - AUTO FLIPS FROM REPO ===
-async function loadLiveDrop(){
-  try {
-    const res = await fetch('/app/announcements.json?v='+Date.now());
-    const data = await res.json();
-    const card = document.getElementById('liveDropCard');
-    const content = document.getElementById('liveDropContent');
-    if(!data || !data.active || !card || !content) {
-      if(card) card.style.display='none';
+  
+  // If customer has number in URL after paying - e.g. collective.crescita.co.za?member=861
+  if(urlMember){
+    const cleaned = urlMember.replace(/\D/g,'').slice(0,6);
+    if(cleaned){
+      mn = cleaned;
+      localStorage.setItem('collective_member_number', mn);
+      localStorage.setItem('member_number', mn);
+      document.getElementById('badge').textContent = 'MEMBER #'+mn;
+      // clean URL
+      history.replaceState({},'',location.pathname);
       return;
     }
-    card.style.display='block';
-    const imgHtml = data.image ? `<img src="${data.image}" style="width:100%;border-radius:12px;margin-bottom:12px;max-height:200px;object-fit:cover">` : '';
-    content.innerHTML = `
-      <div class="tag" style="background:#00C950;color:#000;border-color:#00C950">🔴 LIVE NOW • ${data.date || ''}</div>
-      <h3 style="color:#fff;margin-top:8px">${data.title}</h3>
-      <p style="color:#aaa">${data.message}</p>
-      ${imgHtml}
-      ${data.buttonLink ? `<a class="btn btn-white" href="${data.buttonLink}" target="_blank">${data.buttonText || 'OPEN'}</a>` : ''}
-    `;
-  } catch(e){
-    console.log('no live drop', e);
+  }
+  
+  // If customer already has number saved
+  if(ls1 || ls2){
+    mn = (ls1 || ls2).replace(/\D/g,'').slice(0,6);
+    document.getElementById('badge').textContent = 'MEMBER #'+mn;
+    return;
+  }
+  
+  // NEW PAYING CUSTOMER - no number yet, assign from Worker KV
+  try{
+    document.getElementById('badge').textContent = 'ASSIGNING #...';
+    const res = await fetch(WORKER + '/api/assign-member', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({site:'collective'})});
+    if(res.ok){
+      const data = await res.json();
+      mn = String(data.member || data.member_number || data.number);
+      localStorage.setItem('collective_member_number', mn);
+      localStorage.setItem('member_number', mn);
+      document.getElementById('badge').textContent = 'MEMBER #'+mn;
+      return;
+    }
+    throw new Error('worker fail');
+  }catch(e){
+    // Fallback if worker offline - assign temp then sync later
+    mn = String(860 + Math.floor(Math.random()*9000));
+    localStorage.setItem('collective_member_number', mn);
+    localStorage.setItem('member_number', mn);
+    document.getElementById('badge').textContent = 'MEMBER #'+mn;
+    // Try save in background
+    fetch(WORKER + '/api/save-member', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({member:mn, fallback:true})}).catch(()=>{});
   }
 }
-loadLiveDrop();
-// END LIVE DROP
 
-// === PROGRAMME LIST WITH DOWNLOAD BUTTONS - ALWAYS SHOWS ===
-const FALLBACK_PDF = "/app/programmes/september-change.pdf";
-const FALLBACK_LIST = [{date:"SEPTEMBER 2025", title:"CHANGE", file:FALLBACK_PDF}];
+function waGrowth(){ return 'https://wa.me/27619757042?text='+encodeURIComponent('Hi I am Member #'+mn+' - book Growth Call'); }
+function waShare(){ return 'https://wa.me/?text='+encodeURIComponent('Join CRESCITA COLLECTIVE with me - Member #'+mn+' https://collective.crescita.co.za?ref='+mn); }
+function waSupport(){ return 'https://wa.me/27619757042?text='+encodeURIComponent('Hi Member #'+mn+' - question about Programme'); }
+function toast(m){ const t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2000); }
 
-function renderProgrammes(list){
-  if(!list || !list.length) list = FALLBACK_LIST;
-  const latest=list[0];
-  const latestEl = document.getElementById('programmeLatest');
-  const listEl = document.getElementById('pdfList');
-  if(latestEl){
-    latestEl.innerHTML=`
-    <div class="tag">${latest.date}</div>
-    <p><b>${latest.title}</b></p>
-    <div style="display:flex;gap:8px;margin-top:8px">
-      <a class="btn" href="${latest.file}" target="_blank" style="flex:1">VIEW</a>
-      <a class="btn btn-outline" href="${latest.file}" download style="flex:1">DOWNLOAD</a>
-    </div><br>`;
+function go(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('b-'+id).classList.add('active');
+  const v=document.getElementById('view');
+  if(id==='home'){
+    v.innerHTML=`<div style="font-size:8px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:4px 9px;border-radius:20px;color:#888;display:inline-block;margin-bottom:10px">R99 = 100% TO COMMUNITY FUND</div><div style="font-family:Syne;font-size:42px;font-weight:800;line-height:.9;letter-spacing:-2px;margin:10px 0">BY GRACE<br><span style="color:#999">WE GROW</span></div><div style="font-size:13px;color:#666;margin-bottom:20px;max-width:280px">You contribute. We grow together. 1 tap to get in.</div><div class="card card-black"><h3 style="font-family:Syne;font-size:18px;margin-bottom:8px">1. PRIVATE COMMUNITY</h3><p style="font-size:12px;color:#aaa;margin-bottom:14px">Tap below — you will join CRESCITA + COLLECTIVE automatically.</p><a class="btn btn-white" href="${WA_COMM}" target="_blank">JOIN CRESCITA COLLECTIVE COMMUNITY</a></div><div class="card"><h3 style="font-family:Syne">5. GROWTH CALL — 30 MIN</h3><p style="font-size:12px;color:#666;margin:10px 0">Book via WhatsApp — your Member # is auto-filled</p><a class="btn" style="background:#fff;color:#000" href="${waGrowth()}" target="_blank">BOOK MY CALL ON WHATSAPP</a></div><div class="card"><h3 style="font-family:Syne">6. PERFORMANCE PROGRAMME</h3><div id="progHome"></div></div>`;
+    loadProgsHome();
   }
-  if(listEl){
-    listEl.innerHTML=list.map(p=>`
-    <div class="prog-item">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-        <span style="font-size:11px;font-weight:700;flex:1">${p.date} — ${p.title}</span>
-        <a href="${p.file}" download style="font-size:10px;border:1.5px solid #000;background:#000;color:#fff;padding:8px 14px;border-radius:999px;text-decoration:none;font-weight:800;white-space:nowrap">DOWNLOAD</a>
-      </div>
-    </div>`).join('');
+  if(id==='card'){
+    v.innerHTML=`<div class="wallet"><div style="font-family:Syne;font-size:11px;letter-spacing:.2em;opacity:.6">CRESCITA</div><div style="margin-top:56px"><p style="font-family:Syne;font-size:12px;letter-spacing:.24em;opacity:.4;margin-bottom:16px">BY GRACE WE GROW</p><div style="display:flex;align-items:baseline;gap:6px"><span style="opacity:.5">MEMBER</span><span style="font-family:Syne;font-weight:800;font-size:72px">#${mn}</span></div><p style="margin-top:12px;font-size:11px;opacity:.3">THROUGH UBUNTU — ${mn==='859'?'FOUNDER':'COLLECTIVE'} #${mn}</p></div><div style="margin-top:40px;display:flex;gap:16px;align-items:end"><div id="qrBox" style="width:84px;height:84px;background:#fff;border-radius:12px;padding:7px;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(6,1fr);gap:2px"></div><p style="flex:1;text-align:right;font-size:10px;opacity:.4;word-break:break-all">https://collective.crescita.co.za?ref=${mn}</p></div></div><canvas id="memberCanvas" width="1080" height="1920" style="display:none"></canvas><canvas id="qrTemp" width="400" height="400" style="display:none"></canvas><button class="btn btn-white" style="background:#000;color:#fff;margin-top:16px" id="dlBtn">DOWNLOAD FOR SOCIALS</button><a class="btn" style="background:#25D366;border-color:#25D366;margin-top:10px" href="${waShare()}" target="_blank">SHARE CARD ON WHATSAPP</a><p style="font-size:10px;color:#999;text-align:center;margin-top:10px">Your permanent number — keep this card</p>`;
+    setTimeout(()=>{drawWalletQR(); drawFullCard();},100);
   }
+  if(id==='prog'){
+    v.innerHTML=`<h3 style="font-family:Syne;font-size:20px;margin-bottom:16px">PERFORMANCE PROGRAMME</h3><div class="card card-black"><div style="display:flex;gap:8px;margin-bottom:20px"><span style="background:#fff;color:#000;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:700">SEPTEMBER 2025</span><span style="border:1px solid rgba(255,255,255,.2);padding:4px 12px;border-radius:999px;font-size:10px">LIVE NOW</span></div><div style="font-family:Syne;font-size:34px;font-weight:800;margin-bottom:24px">CHANGE THE<br>ENDING</div><div style="display:flex;gap:10px"><a class="btn btn-white" href="/app/programmes/september-change.pdf" target="_blank">VIEW</a><a class="btn" style="background:rgba(255,255,255,.05);color:#fff;border-color:rgba(255,255,255,.2)" href="/app/programmes/september-change.pdf" download>DOWNLOAD</a></div></div><div class="card"><h3>NEED HELP?</h3><p>Questions? WhatsApp us</p><a class="btn" style="background:#25D366;border-color:#25D366" href="${waSupport()}" target="_blank">WHATSAPP SUPPORT</a></div><div id="progList"></div>`;
+    loadProgs();
+  }
+  if(id==='perks'){
+    v.innerHTML=`<h3 style="font-family:Syne;font-size:20px;margin-bottom:16px">MEMBER PERKS — #${mn}</h3><div class="card"><h3>15% OFF — COLLECTIVE STORE</h3><p>Use at checkout on crescita.co.za</p><div style="border:1.5px dashed #000;border-radius:14px;padding:12px;text-align:center;font-family:Syne;font-weight:800;letter-spacing:2px;margin:12px 0">${DISCOUNT}</div><button class="btn" id="copyBtn">COPY CODE</button></div><div class="card" style="border-color:#00C950"><h3>🔔 GET PINGED FIRST</h3><button class="btn" id="pushBtn">ENABLE NOTIFICATIONS</button><p id="pushStatus" style="font-size:10px;color:#999;text-align:center;margin-top:10px">Not enabled yet</p></div><div class="card card-black"><h3 style="color:#fff">PRIVATE COMMUNITY</h3><a class="btn btn-white" href="${WA_COMM}" target="_blank">JOIN WHATSAPP COMMUNITY</a></div><div class="card"><h3>GROWTH CALL</h3><a class="btn" href="${waGrowth()}" target="_blank">BOOK ON WHATSAPP</a></div>`;
+    setTimeout(()=>{bindCopyPush();},100);
+  }
+  v.scrollTop=0;
 }
-renderProgrammes(FALLBACK_LIST);
-fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
-  if(list && list.length) renderProgrammes(list);
-}).catch(e=>{
-  console.log('prog fetch err, keeping fallback', e);
-});
+function drawWalletQR(){
+  const box=document.getElementById('qrBox'); if(!box) return; box.innerHTML='';
+  for(let i=0;i<36;i++){ const d=document.createElement('div'); d.style.borderRadius='2px'; d.style.background=Math.random()>0.4?'#000':'#fff'; box.appendChild(d); }
+}
+function drawFullCard(){
+  const c=document.getElementById('memberCanvas'); const qr=document.getElementById('qrTemp');
+  if(!c) return; const ctx=c.getContext('2d');
+  ctx.fillStyle='#000';ctx.fillRect(0,0,1080,1920); ctx.strokeStyle='#1A1A1A';ctx.lineWidth=2;ctx.strokeRect(30,30,1020,1860);
+  ctx.fillStyle='#fff';ctx.font='800 48px Syne';ctx.fillText('CRESCITA',80,140); ctx.font='600 22px Inter';ctx.fillStyle='#888';ctx.fillText('R99 = 100% TO COMMUNITY FUND',80,190);
+  ctx.fillStyle='#fff';ctx.font='800 110px Syne';ctx.fillText('BY GRACE',80,360); ctx.fillStyle='#555';ctx.fillText('WE GROW',80,480);
+  ctx.fillStyle='#fff';ctx.font='800 90px Syne';ctx.fillText('MEMBER',80,720); ctx.font='800 200px Syne';ctx.fillText('#'+mn,80,920);
+  ctx.strokeStyle='#222';ctx.beginPath();ctx.moveTo(80,1000);ctx.lineTo(1000,1000);ctx.stroke(); ctx.fillStyle='#aaa';ctx.font='400 28px Inter';ctx.fillText('Through Ubuntu. Collective member.',80,1070);
+  const url='https://collective.crescita.co.za?ref='+mn;
+  ctx.fillStyle='#666';ctx.font='700 24px Inter';ctx.fillText('SCAN TO JOIN COLLECTIVE',80,1620); ctx.fillStyle='#fff';ctx.font='700 28px Inter';ctx.fillText(url,80,1660);
+  ctx.fillStyle='#444';ctx.font='700 20px Inter';ctx.fillText('CRESCITA COLLECTIVE • HERITAGE & HAND',80,1840);
+  if(typeof QRCode!=='undefined' && qr){ QRCode.toCanvas(qr,url,{width:500,margin:1,color:{dark:'#FFFFFF',light:'#000000'}},(err)=>{ if(!err){ try{ ctx.fillStyle='#000'; ctx.fillRect(70,1140,440,440); ctx.drawImage(qr,80,1150,420,420);}catch(e){} } }); }
+  const dl=document.getElementById('dlBtn'); if(dl) dl.onclick=()=>{ c.toBlob(b=>{ const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download='CRESCITA-MEMBER-'+mn+'-STORY.png'; a.click(); URL.revokeObjectURL(u); toast('Saved!'); }); };
+}
+function bindCopyPush(){
+  const cb=document.getElementById('copyBtn'); if(cb) cb.onclick=()=>{navigator.clipboard.writeText(DISCOUNT); cb.textContent='COPIED! ✅'; setTimeout(()=>cb.textContent='COPY CODE',1500); toast('Code copied');};
+  const pb=document.getElementById('pushBtn'); const ps=document.getElementById('pushStatus');
+  if(pb) pb.onclick=async()=>{
+    try{
+      const p=await Notification.requestPermission(); if(p!=='granted') return;
+      const reg=await navigator.serviceWorker.register('/sw.js'); await navigator.serviceWorker.ready;
+      const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:Uint8Array.from(atob(VAPID.replace(/-/g,'+').replace(/_/g,'/').padEnd(VAPID.length+ (4-VAPID.length%4)%4,'=')),c=>c.charCodeAt(0))});
+      ps.textContent='Saving to KV...';
+      await fetch(WORKER+'/api/save-subscription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({member:mn,subscription:sub,site:'collective'})});
+      ps.textContent='✅ Enabled as Member #'+mn; pb.textContent='NOTIFICATIONS ON'; pb.style.background='#00C950'; toast('Notifications ON');
+    }catch(e){ ps.textContent='Error: '+e.message; }
+  };
+}
+function loadProgs(){
+  const fallback=[{date:'SEPTEMBER 2025',title:'CHANGE THE ENDING',file:'/app/programmes/september-change.pdf'}];
+  const el=document.getElementById('progList')||document.getElementById('progHome');
+  if(el) el.innerHTML=fallback.map(p=>`<div style="padding:12px 0;border-bottom:1px solid #F0F0F0;display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:700">${p.date} — ${p.title}</span><a href="${p.file}" download style="font-size:10px;border:1.5px solid #000;background:#000;color:#fff;padding:8px 14px;border-radius:999px;text-decoration:none;font-weight:800">DOWNLOAD</a></div>`).join('');
+  fetch('/app/programmes/data.json?v='+Date.now()).then(r=>r.json()).then(list=>{
+    if(list&&list.length&&el){
+      el.innerHTML=list.map(p=>`<div style="padding:12px 0;border-bottom:1px solid #F0F0F0;display:flex;justify-content:space-between"><span style="font-size:11px;font-weight:700">${p.date} — ${p.title}</span><a href="${p.file}" download style="font-size:10px;border:1.5px solid #000;background:#000;color:#fff;padding:8px 14px;border-radius:999px;text-decoration:none;font-weight:800">DOWNLOAD</a></div>`).join('');
+    }
+  }).catch(()=>{});
+}
+function loadProgsHome(){
+  const el=document.getElementById('progHome');
+  if(el) el.innerHTML=`<div style="font-size:8px;letter-spacing:1.5px;border:1px solid #E0E0E0;padding:4px 9px;border-radius:20px;color:#888;display:inline-block;margin-bottom:10px">SEPTEMBER 2025</div><div style="font-weight:700">CHANGE THE ENDING</div><div style="display:flex;gap:8px;margin-top:8px"><a class="btn" style="flex:1" href="/app/programmes/september-change.pdf" target="_blank">VIEW</a><a class="btn" style="flex:1;background:#fff;color:#000" href="/app/programmes/september-change.pdf" download>DOWNLOAD</a></div>`;
+}
 
-// BLOCK DOUBLE-TAP + PINCH ZOOM
-document.addEventListener('touchstart', function(e){ if(e.touches.length>1){ e.preventDefault(); } }, {passive:false});
-let lastTouchEnd=0;
-document.addEventListener('touchend', function(e){
-  const now=Date.now();
-  if(now-lastTouchEnd<=300){ e.preventDefault(); }
-  lastTouchEnd=now;
-}, false);
-document.addEventListener('dblclick', function(e){ e.preventDefault(); }, {passive:false});
+// START - assign number then render
+initMemberNumber().then(()=>{ go('home'); });
 </script>
 </body>
 </html>
