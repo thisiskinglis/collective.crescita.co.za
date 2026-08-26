@@ -81,7 +81,7 @@ function go(id){
         pb.onclick=async()=>{
           try{
             const p=await Notification.requestPermission(); if(p!=='granted') return;
-            const reg=await navigator.serviceWorker.register('/app/sw.js?v=FINAL'); await navigator.serviceWorker.ready;
+            const reg=await navigator.serviceWorker.register('/sw.js?v=FINAL-2343'); await navigator.serviceWorker.ready;
             const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlBase64ToUint8Array(VAPID)});
             ps.textContent='Saving to KV...';
             await fetch(WORKER+'/api/save-subscription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({member:mn,subscription:sub,site:'collective'})});
